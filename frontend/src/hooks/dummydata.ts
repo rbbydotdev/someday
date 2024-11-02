@@ -1,1 +1,8 @@
-export const dummyData = ["2024-11-02T13:00:00.000Z", "2024-11-02T14:00:00.000Z", "2024-11-02T15:00:00.000Z", "2024-11-02T16:00:00.000Z", "2024-11-02T17:00:00.000Z", "2024-11-02T18:00:00.000Z", "2024-11-02T19:00:00.000Z", "2024-11-02T20:00:00.000Z"];
+const start = new Date();
+start.setUTCHours(13, 0, 0, 0); // Set hours to 13:00:00 UTC, keeping the current date
+
+export const dummyData = Array.from({ length: 16 }, (_, i) => {
+  const date = new Date(start);
+  date.setUTCHours(start.getUTCHours() + i);
+  return date.toISOString();
+});

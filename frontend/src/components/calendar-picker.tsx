@@ -146,7 +146,7 @@ export function CalendarPicker() {
             <CardTitle className="flex justify-center items-center gap-2 w-full">
               <div className="w-58 overflow-hidden">
                 <div className="whitespace-nowrap overflow-ellipsis overflow-hidden">
-                  Appointment Scheduler
+                  Appointment Scheduler Demo
                 </div>
                 <div className="whitespace-nowrap overflow-ellipsis overflow-hidden">
                   ({durationMinutes} minutes)

@@ -15,37 +15,11 @@ export function useGoogleTimeslots() {
   }, []);
 
   useEffect(() => {
-    try {
-      setStatus("pending");
-      //@ts-expect-error google.script.run is not typed
-      google.script.run
-        .withSuccessHandler(function ({
-          timeslots,
-          durationMinutes,
-        }: {
-          timeslots: string[];
-          durationMinutes: number;
-        }) {
-          setAvailableGoogleSlots(
-            timeslots.map((timeslot) => new Date(timeslot))
-          );
-          setDurationMinutes(durationMinutes);
-          setStatus("success");
-        })
-        .withFailureHandler(function (err: Error) {
-          setError(err);
-        })
-        .fetchAvailability();
-    } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        setStatus("success");
-        setAvailableGoogleSlots(dummyData.map((d) => new Date(d)));
-      } else {
-        console.error(error);
-        setStatus("error");
-        setError(error as Error);
-      }
-    }
+    setStatus("pending");
+    setTimeout(() => {
+      setStatus("success");
+      setAvailableGoogleSlots(dummyData.map((d) => new Date(d)));
+    }, 2000);
   }, []);
 
   return [availableGoogleSlots, durationMinutes, status, error, reset] as const;

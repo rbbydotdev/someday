@@ -22,31 +22,8 @@ export function useBookGoogleTimeslot() {
     phone: string;
     note?: string;
   }) {
-    try {
-      setStatus("pending");
-      //@ts-expect-error google.script.run is not typed
-      google.script.run
-        .withSuccessHandler(function () {
-          setStatus("success");
-        })
-        .withFailureHandler(function (err: Error) {
-          setStatus("error");
-          setError(
-            new Error("Could not book timeslot, please try again - " + err)
-          );
-        })
-        .bookTimeslot(timeslot.toISOString(), name, email, phone, note);
-    } catch (err) {
-      if (process.env.NODE_ENV === "development") {
-        setStatus("success");
-      } else {
-        console.error(err);
-        setStatus("error");
-        setError(
-          new Error("Could not book timeslot, please try again - " + err)
-        );
-      }
-    }
+    setStatus("pending");
+    setTimeout(() => setStatus("success"), 2000);
   },
   []);
   return [status, error, makeBooking, reset] as const;
