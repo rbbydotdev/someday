@@ -1,7 +1,7 @@
 
 # Someday
 
-**Free and open-source cal.com / calendly alternative built on [Google-App-Script](https://developers.google.com/apps-script) for Gmail users.**
+**Free and open-source cal.com / calendly alternative built on [Google-Apps-Script](https://developers.google.com/apps-script) for Gmail users.**
 
 <img src="./screencap1.jpg" width="350" />
 
@@ -11,16 +11,16 @@
 
 ## What is Someday?
 
-Someday is a simple, open-source scheduling tool designed specifically for Gmail users. Uses Google App Scripts to host and [clasp](https://github.com/google/clasp) to manage. Built with modern technologies like [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Shadcn/UI](https://ui.shadcn.com/), and [Vite](https://vite.dev/). A simple alternative to traditional scheduling apps like Calendly.
+Someday is a simple, open-source scheduling tool designed specifically for Gmail users. Uses Google Apps Scripts to host and [clasp](https://github.com/google/clasp) to manage. Built with modern technologies like [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Shadcn/UI](https://ui.shadcn.com/), and [Vite](https://vite.dev/). A simple alternative to traditional scheduling apps like Calendly.
 
 ### Key Features
 
 - **Free and Open Source**: Enjoy all the premium scheduling features without any cost. Someday is completely free to use and open for contributions.
-- **Effortless Integration**: Designed as a Google App Script, Someday integrates seamlessly with your Gmail, making it easy to manage your schedule directly from your inbox.
+- **Effortless Integration**: Designed as a Google Apps Script, Someday integrates seamlessly with your Gmail, making it easy to manage your schedule directly from your inbox.
 - **Developer-Friendly**: Built with modern, developer-preferred technologies, Someday is easy to customize and extend to meet your specific needs.
 - **Customizable Work Hours**: Set your availability with precision, allowing others to book time slots that fit your schedule perfectly.
 - **Simple Booking Process**: Users can select a date and time slot, then fill out a straightforward form with their name, email, phone, and an optional note.
-- **Privacy First**: Your data stays with you. Someday respects your privacy and ensures your information is secure.
+- **Privacy First**: No data sharing beyond google to 3rd party apps
 
 ## Getting Started
 
