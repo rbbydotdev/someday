@@ -1,10 +1,17 @@
 const CALENDAR = "primary";
 const TIME_ZONE = "America/New_York";
+//  America/Los_Angeles
+//  America/Denver
+//  America/Chicago
+//  Europe/London
+//  Europe/Berlin
 const WORKDAYS = [1, 2, 3, 4, 5];
 const WORKHOURS = {
   start: 9,
   end: 13,
 };
+const DAYS_IN_ADVANCE = 28;
+//high numbered days in advance cause significant loading time slow down
 const TIMESLOT_DURATION = 30;
 
 const TSDURMS = TIMESLOT_DURATION * 60000;
@@ -25,7 +32,11 @@ function fetchAvailability(): {
   const calendarId = CALENDAR;
   const now = nearestTimeslot;
   const end = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 28)
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate() + DAYS_IN_ADVANCE
+    )
   );
 
   const response = Calendar.Freebusy!.query({

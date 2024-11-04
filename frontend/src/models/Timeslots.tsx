@@ -23,7 +23,7 @@ export class Timeslots {
           date.getDate() === slot.getDate() &&
           date.getMonth() === slot.getMonth() &&
           date.getFullYear() === slot.getFullYear()
-      ));
+      )).sort();
   }
   hasSlotsForDate(date: Date) {
     return this.slotsForDate(date).length > 0;
