@@ -108,7 +108,7 @@ export function CalendarPicker() {
 
   if (selectedTimeSlot && bookingStatus === "success") {
     return (
-      <Card className="sm:w-[600px] mx-auto min-h-[600px] flex flex-col justify-center space-y-4">
+      <Card className="sm:w-[600px] p-4 mx-auto min-h-[600px] flex flex-col justify-center space-y-4">
         <h1>Thank You!</h1>
         <h2>Your appointment has been booked successfully.</h2>
         <div className="font-bold font-mono">
