@@ -108,9 +108,12 @@ export function CalendarPicker() {
 
   if (selectedTimeSlot && bookingStatus === "success") {
     return (
-      <Card className="sm:w-[600px] mx-auto min-h-[600px] flex flex-col justify-center space-y-4">
+      <Card className="sm:w-[600px] mx-auto min-h-[600px] flex flex-col justify-center space-y-4 p-4">
         <h1>Thank You!</h1>
-        <h2>Your appointment has been booked successfully.</h2>
+        <h2>
+          Your appointment <i>would have</i> been booked successfully if this
+          were not a demo 😉
+        </h2>
         <div className="font-bold font-mono">
           {formatInTimeZone(selectedTimeSlot!, timezone, "MMMM d, yyyy h:mm a")}
         </div>
@@ -146,7 +149,7 @@ export function CalendarPicker() {
             <CardTitle className="flex justify-center items-center gap-2 w-full">
               <div className="w-58 overflow-hidden">
                 <div className="whitespace-nowrap overflow-ellipsis overflow-hidden">
-                  Appointment Scheduler Demo
+                  Demo / Mocked Endpoints
                 </div>
                 <div className="whitespace-nowrap overflow-ellipsis overflow-hidden">
                   ({durationMinutes} minutes)
