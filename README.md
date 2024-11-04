@@ -5,7 +5,7 @@
 
 <img src="./screencap1.jpg" width="350" />
 
-## Demo
+## Demo (mocked endpoints)
 
 [https://someday-demo.vercel.app/](https://someday-demo.vercel.app/)
 
