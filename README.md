@@ -1,7 +1,7 @@
 
 # Someday
 
-**Free and open-source cal.com / calendly alternative built on [Google-Apps-Script](https://developers.google.com/apps-script) for Gmail users.**
+**Free to host and open-source cal.com / calendly alternative built on [Google-Apps-Script](https://developers.google.com/apps-script) for Gmail users.**
 
 <img src="./screencap1.jpg" width="350" />
 
