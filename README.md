@@ -109,7 +109,7 @@ __you may need to sign out of all accounts, and only into your target account__
 
 - `npm run deploy` - build and delpoy
 
-- `npm run build` - build only, follow with `clasp push` to push changes
+- `npm run build` - build only
 
 - `undeployall.sh` - undeploy all versions of the script
 

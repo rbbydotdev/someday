@@ -28,7 +28,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useTimezoneDropdown } from "./timezone-dropdown";
 
 export function CalendarPicker() {
-  // const [OkDialog, openOkDialog] = useOkDialog();
   const [TimezoneDropdown, timezone] = useTimezoneDropdown();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<Date | undefined>(
@@ -56,7 +55,7 @@ export function CalendarPicker() {
   }, [timezone]);
   useEffect(() => {
     if (!selectedDate) {
-      const firstTimeslot = [...availableSlots.timeslots].sort()[0];
+      const firstTimeslot = [...availableSlots.timeslots].sort().reverse()[0];
       if (!firstTimeslot) return;
       setCurrentMonth(firstTimeslot);
     }
