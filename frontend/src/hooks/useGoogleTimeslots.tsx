@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { dummyData } from "@/hooks/dummydata";
-// const slotsByDayKey = (date: Date) => format(date, "yyyy-MM-dd");
+import { generateDummyData } from "@/hooks/dummydata";
 export function useGoogleTimeslots() {
   const [availableGoogleSlots, setAvailableGoogleSlots] = useState<Date[]>([]);
   const [durationMinutes, setDurationMinutes] = useState(30);
@@ -39,7 +38,9 @@ export function useGoogleTimeslots() {
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
         setStatus("success");
+        const dummyData = generateDummyData();
         setAvailableGoogleSlots(dummyData.map((d) => new Date(d)));
+        console.log("Using dummy data", dummyData);
       } else {
         console.error(error);
         setStatus("error");

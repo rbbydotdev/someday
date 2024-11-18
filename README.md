@@ -51,7 +51,7 @@ const TIMESLOT_DURATION = 30;
 - `cd ./frontend`
 - `npm install`
 - `npm run dev`
-- update `dummyData` by running `./dummydata.sh`
+- dummyData will be generated on the fly using the generateDummyData function ~line 42 in `frontend/hooks/useGoogleTimeSlots.ts`
 
 ### Install 
 

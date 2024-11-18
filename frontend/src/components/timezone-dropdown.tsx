@@ -77,7 +77,7 @@ export function TimezoneDropdown({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[180px] justify-between"
         >
           {value
             ? timezones.find((timezone) => timezone.value === value)?.label

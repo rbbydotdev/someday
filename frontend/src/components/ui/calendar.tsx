@@ -18,7 +18,6 @@ function Calendar({
       className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row justify-center",
-        // month: "space-y-4",
         month_caption: "hidden",
         caption_label: "text-md font-medium",
         nav: "hidden",

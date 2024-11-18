@@ -14,6 +14,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useBookGoogleTimeslot } from "@/hooks/useBookGoogleTimeslot";
 import { useGoogleTimeslots } from "@/hooks/useGoogleTimeslots";
+
+import { ModeToggle } from "@/components/mode-toggle";
 import { Timeslots } from "@/models/Timeslots";
 import { addMonths, format } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
@@ -140,28 +142,33 @@ export function CalendarPicker() {
         </div>
       )}
       <Card className="sm:w-[600px] mx-auto min-h-[600px] flex flex-col justify-between">
-        <CardHeader>
-          <div className="flex justify-between items-center flex-col sm:flex-row gap-4">
-            <CardTitle className="flex justify-center items-center gap-2 w-full">
-              <div className="w-58 overflow-hidden">
-                <div className="whitespace-nowrap overflow-ellipsis overflow-hidden">
-                  Appointment Scheduler
+        <div className="relative">
+          <ModeToggle className="md:hidden absolute right-1 top-1" />
+          <ModeToggle className="absolute -right-10 -top-10 md:block hidden" />
+          <CardHeader className="max-w-full pl-4 pr-12 md:pr-6 md:pl-6">
+            <div className="flex justify-between items-center flex-col sm:flex-row gap-4 relative">
+              <CardTitle className="max-w-64">
+                <div className="overflow-hidden">
+                  <div className="whitespace-nowrap overflow-ellipsis overflow-hidden">
+                    Appointment Scheduler
+                  </div>
+                  <div className="whitespace-nowrap overflow-ellipsis overflow-hidden">
+                    ({durationMinutes} minutes)
+                  </div>
                 </div>
-                <div className="whitespace-nowrap overflow-ellipsis overflow-hidden">
-                  ({durationMinutes} minutes)
+              </CardTitle>
+
+              {!showForm && (
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm text-muted-foreground">
+                    Your Timezone
+                  </Label>
+                  <TimezoneDropdown />
                 </div>
-              </div>
-            </CardTitle>
-            {!showForm && (
-              <div className="flex items-center gap-2">
-                <Label className="text-sm text-muted-foreground">
-                  Your Timezone
-                </Label>
-                <TimezoneDropdown />
-              </div>
-            )}
-          </div>
-        </CardHeader>
+              )}
+            </div>
+          </CardHeader>
+        </div>
 
         <CardContent className="p-6 min-h-[420px] pb-0">
           {!showForm ? (

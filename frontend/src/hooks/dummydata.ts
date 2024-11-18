@@ -1,1 +1,15 @@
-export const dummyData = ["2024-11-02T13:00:00.000Z", "2024-11-02T14:00:00.000Z", "2024-11-02T15:00:00.000Z", "2024-11-02T16:00:00.000Z", "2024-11-02T17:00:00.000Z", "2024-11-02T18:00:00.000Z", "2024-11-02T19:00:00.000Z", "2024-11-02T20:00:00.000Z"];
+export function generateDummyData(): string[] {
+  const now = new Date();
+  const dummyData = Array.from({ length: 8 }, (_, i) => {
+    const date = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        13 + i
+      )
+    );
+    return date.toISOString();
+  });
+  return dummyData;
+}
