@@ -40,6 +40,12 @@ const WORKHOURS = {
 const TIMESLOT_DURATION = 30;
 ```
 
+### Self host iframe html / remove google app scripts banner
+
+- Google apps script has a banner that says "This application was created by a Google Apps Script user", to remove you can host the html file yourself and embed the script as an iframe
+
+- Use the `hosted-iframe-example.html` file, github pages is a good option for this, add your script url to the iframe src
+
 ### Develop
 
 - `cd ./frontend`
