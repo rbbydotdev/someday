@@ -113,7 +113,10 @@ export function CalendarPicker() {
     return (
       <Card className="sm:w-[600px] p-4 mx-auto min-h-[600px] flex flex-col justify-center space-y-4">
         <h1>Thank You!</h1>
-        <h2>Your appointment has been booked successfully.</h2>
+        <h2>
+          Your appointment <span className="font-bold">WOULD HAVE</span> been
+          booked successfully, but this is a demo 😉
+        </h2>
         <div className="font-bold font-mono">
           {formatInTimeZone(selectedTimeSlot!, timezone, "MMMM d, yyyy h:mm a")}
         </div>

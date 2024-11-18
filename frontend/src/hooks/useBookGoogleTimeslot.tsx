@@ -9,7 +9,7 @@ export function useBookGoogleTimeslot() {
     setError(null);
     setStatus("idle");
   }, []);
-  const makeBooking = useCallback(function ({
+  const makeBooking = useCallback(async function ({
     timeslot,
     name,
     email,
@@ -22,31 +22,9 @@ export function useBookGoogleTimeslot() {
     phone: string;
     note?: string;
   }) {
-    try {
-      setStatus("pending");
-      //@ts-expect-error google.script.run is not typed
-      google.script.run
-        .withSuccessHandler(function () {
-          setStatus("success");
-        })
-        .withFailureHandler(function (err: Error) {
-          setStatus("error");
-          setError(
-            new Error("Could not book timeslot, please try again - " + err)
-          );
-        })
-        .bookTimeslot(timeslot.toISOString(), name, email, phone, note);
-    } catch (err) {
-      if (process.env.NODE_ENV === "development") {
-        setStatus("success");
-      } else {
-        console.error(err);
-        setStatus("error");
-        setError(
-          new Error("Could not book timeslot, please try again - " + err)
-        );
-      }
-    }
+    setStatus("pending");
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setStatus("success");
   },
   []);
   return [status, error, makeBooking, reset] as const;

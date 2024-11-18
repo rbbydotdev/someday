@@ -14,39 +14,15 @@ export function useGoogleTimeslots() {
   }, []);
 
   useEffect(() => {
-    try {
+    async function fetchData() {
       setStatus("pending");
-      //@ts-expect-error google.script.run is not typed
-      google.script.run
-        .withSuccessHandler(function ({
-          timeslots,
-          durationMinutes,
-        }: {
-          timeslots: string[];
-          durationMinutes: number;
-        }) {
-          setAvailableGoogleSlots(
-            timeslots.map((timeslot) => new Date(timeslot))
-          );
-          setDurationMinutes(durationMinutes);
-          setStatus("success");
-        })
-        .withFailureHandler(function (err: Error) {
-          setError(err);
-        })
-        .fetchAvailability();
-    } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        setStatus("success");
-        const dummyData = generateDummyData();
-        setAvailableGoogleSlots(dummyData.map((d) => new Date(d)));
-        console.log("Using dummy data", dummyData);
-      } else {
-        console.error(error);
-        setStatus("error");
-        setError(error as Error);
-      }
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setStatus("success");
+      const dummyData = generateDummyData();
+      setAvailableGoogleSlots(dummyData.map((d) => new Date(d)));
+      console.log("Using dummy data", dummyData);
     }
+    fetchData();
   }, []);
 
   return [availableGoogleSlots, durationMinutes, status, error, reset] as const;
