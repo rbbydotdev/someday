@@ -173,7 +173,7 @@ export function CalendarPicker() {
             </CardHeader>
           </Show>
           <Else>
-            <h2 className="text-xl font-semibold mb-4">
+            <h2 className="text-xl font-semibold mb-4 mt-10">
               Appointment for{" "}
               {selectedDate
                 ? format(selectedDate, "MMMM d, yyyy")
