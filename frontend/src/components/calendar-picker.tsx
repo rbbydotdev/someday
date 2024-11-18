@@ -262,8 +262,8 @@ export function CalendarPicker() {
                 <Input id="email" name="email" type="email" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" name="phone" type="tel" required />
+                <Label htmlFor="phone">Phone Number (optional)</Label>
+                <Input id="phone" name="phone" type="tel" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="note">Note (optional)</Label>
