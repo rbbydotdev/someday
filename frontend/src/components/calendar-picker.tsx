@@ -136,17 +136,19 @@ export function CalendarPicker() {
         confirm={resetBookGoogle}
       />
 
-      {slotsStatus === "pending" && (
-        <div className="w-[356px] sm:w-[600px] h-[400px] bg-primary absolute rounded-xl z-50 opacity-70">
-          <div className="flex justify-center items-center h-full flex-col stroke-primary-foreground">
-            <Loader2 size={60} className="animate-spin" stroke="current" />
-            <p className="text-lg font-semibold text-primary-foreground">
-              Loading...
-            </p>
-          </div>
-        </div>
-      )}
-      <Card className="sm:w-[600px] mx-auto min-h-[400px] space-y-4">
+      <Card className="sm:w-[600px] mx-auto min-h-[400px] space-y-4 relative">
+        <When condition={slotsStatus === "pending"}>
+          <Show>
+            <div className="bg-primary absolute rounded-xl z-50 opacity-70 inset-0">
+              <div className="flex justify-center items-center h-full flex-col stroke-primary-foreground">
+                <Loader2 size={60} className="animate-spin" stroke="current" />
+                <p className="text-lg font-semibold text-primary-foreground">
+                  Loading...
+                </p>
+              </div>
+            </div>
+          </Show>
+        </When>
         <div className="relative max-h-0">
           <ModeToggle className="md:hidden absolute right-1 top-1" />
           <ModeToggle className="absolute -right-10 -top-10 md:block hidden" />
