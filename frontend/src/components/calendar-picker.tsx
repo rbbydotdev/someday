@@ -152,7 +152,7 @@ export function CalendarPicker() {
         </div>
         <When condition={!showForm}>
           <Show>
-            <CardHeader className="max-w-full pl-4 pr-12 md:pr-6 md:pl-6">
+            <CardHeader className="max-w-full">
               <div className="flex justify-between items-center flex-col sm:flex-row gap-4 relative">
                 <CardTitle className="max-w-64">
                   <div className="overflow-hidden">
@@ -175,7 +175,7 @@ export function CalendarPicker() {
             </CardHeader>
           </Show>
           <Else>
-            <h2 className="text-xl font-semibold mb-4 mt-10">
+            <h2 className="text-xl font-semibold mb-4 pt-6 px-6">
               Appointment for{" "}
               {selectedDate
                 ? format(selectedDate, "MMMM d, yyyy")
