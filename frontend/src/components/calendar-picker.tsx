@@ -297,7 +297,7 @@ function CalendarTimeslotPicker({
         />
       </div>
       <div className="flex-1 w-full lg:w-64">
-        <h3 className="text-lg font-semibold mb-4">
+        <h3 className="text-lg font-semibold mb-4 h-[36px] flex flex-col justify-center">
           {selectedDate
             ? format(selectedDate, "MMMM d, yyyy")
             : "Select a date"}
