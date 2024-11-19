@@ -134,7 +134,7 @@ export function CalendarPicker() {
       />
 
       {slotsStatus === "pending" && (
-        <div className="w-[356px] sm:w-[600px] h-[620px] bg-primary absolute rounded-xl z-50 opacity-70">
+        <div className="w-[356px] sm:w-[600px] h-[600px] bg-primary absolute rounded-xl z-50 opacity-70">
           <div className="flex justify-center items-center h-full flex-col stroke-primary-foreground">
             <Loader2 size={60} className="animate-spin" stroke="current" />
             <p className="text-lg font-semibold text-primary-foreground">
@@ -143,7 +143,7 @@ export function CalendarPicker() {
           </div>
         </div>
       )}
-      <Card className="sm:w-[600px] mx-auto min-h-[600px] flex flex-col justify-between">
+      <Card className="sm:w-[600px] gap-4 mx-auto min-h-[600px] flex flex-col justify-between">
         <div className="relative max-h-0">
           <ModeToggle className="md:hidden absolute right-1 top-1" />
           <ModeToggle className="absolute -right-10 -top-10 md:block hidden" />
@@ -189,7 +189,7 @@ export function CalendarPicker() {
           </Else>
         </When>
 
-        <CardContent className="p-6 pt-0 sm:pt-6 min-h-[420px] pb-0">
+        <CardContent className="p-6 pt-0 sm:pt-6 h-[600px] sm:h-[380px] pb-0">
           <When condition={!showForm}>
             <Show>
               <CalendarTimeslotPicker
@@ -301,7 +301,7 @@ function CalendarTimeslotPicker({
             : "Select a date"}
         </h3>
         {selectedDate && (
-          <ScrollArea className="h-72">
+          <ScrollArea className="h-44 sm:h-64">
             <div
               className="grid grid-cols-2 gap-4 pr-4"
               key={"" + selectedDate?.getTime()}
