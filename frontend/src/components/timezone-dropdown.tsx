@@ -22,7 +22,6 @@ import { useEffect } from "react";
 
 const tzlocal = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const timezones = [
-  { value: tzlocal, label: tzlocal },
   { value: "America/New_York", label: "New York" },
   { value: "America/Los_Angeles", label: "Los Angeles" },
   { value: "America/Chicago", label: "Chicago" },
@@ -35,7 +34,14 @@ const timezones = [
   { value: "Asia/Bangkok", label: "Bangkok" },
 ];
 
-const defaultValue = timezones[0].value;
+let defaultIndex = timezones.findIndex((x) => x.value == tzlocal);
+if (defaultIndex < 0) {
+  timezones.unshift({ value: tzlocal, label: tzlocal });
+  defaultIndex = 0;
+}
+
+const defaultValue = timezones[defaultIndex].value;
+
 export function useTimezoneDropdown() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(defaultValue);
@@ -45,16 +51,15 @@ export function useTimezoneDropdown() {
     }
   }, [value]);
   const MemoTimezoneDropDown = React.useMemo(
-    () => () =>
-      (
-        <TimezoneDropdown
-          open={open}
-          setOpen={setOpen}
-          value={value}
-          setValue={setValue}
-        />
-      ),
-    [open, value]
+    () => () => (
+      <TimezoneDropdown
+        open={open}
+        setOpen={setOpen}
+        value={value}
+        setValue={setValue}
+      />
+    ),
+    [open, value],
   );
   return [MemoTimezoneDropDown, value || defaultValue] as const;
 }
@@ -105,7 +110,7 @@ export function TimezoneDropdown({
                   <CheckIcon
                     className={cn(
                       "ml-auto h-4 w-4",
-                      value === timezone.value ? "opacity-100" : "opacity-0"
+                      value === timezone.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>
