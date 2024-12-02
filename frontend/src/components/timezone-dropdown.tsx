@@ -17,12 +17,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { MapPin } from "lucide-react";
 import { useEffect } from "react";
 
 const tzlocal = Intl.DateTimeFormat().resolvedOptions().timeZone;
-const timezones = [
-  { value: tzlocal, label: tzlocal },
+
+type TZ = { value: string; label: string };
+const mytz = {
+  value: tzlocal,
+  label: tzlocal ? tzlocal.split("/").pop()?.replace("_", " ") || "" : "",
+};
+const timezones: TZ[] = [
   { value: "America/New_York", label: "New York" },
   { value: "America/Los_Angeles", label: "Los Angeles" },
   { value: "America/Chicago", label: "Chicago" },
@@ -33,9 +40,9 @@ const timezones = [
   { value: "Asia/Dubai", label: "Dubai" },
   { value: "Australia/Sydney", label: "Sydney" },
   { value: "Asia/Bangkok", label: "Bangkok" },
-];
+].filter((tz) => tz.value !== tzlocal);
 
-const defaultValue = timezones[0].value;
+const defaultValue = mytz.value;
 export function useTimezoneDropdown() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(defaultValue);
@@ -70,6 +77,13 @@ export function TimezoneDropdown({
   value: string;
   setValue: (value: string) => void;
 }) {
+  const onSelect = React.useCallback(
+    (currentValue: string) => {
+      setValue(currentValue === value ? "" : currentValue);
+      setOpen(false);
+    },
+    [setOpen, setValue, value]
+  );
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -80,7 +94,9 @@ export function TimezoneDropdown({
           className="w-[180px] justify-between"
         >
           {value
-            ? timezones.find((timezone) => timezone.value === value)?.label
+            ? value === mytz.value
+              ? mytz.label
+              : timezones.find((timezone) => timezone.value === value)?.label
             : "Select timezone..."}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -91,24 +107,25 @@ export function TimezoneDropdown({
           <CommandList>
             <CommandEmpty>No timezone found.</CommandEmpty>
             <CommandGroup>
+              {mytz && (
+                <>
+                  <TimezoneCommandItem
+                    timezone={mytz}
+                    onSelect={onSelect}
+                    current={value}
+                  >
+                    <MapPin />
+                  </TimezoneCommandItem>
+                  <Separator />
+                </>
+              )}
               {timezones.map((timezone) => (
-                <CommandItem
-                  key={timezone.value + timezone.label}
-                  value={timezone.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
-                  className="cursor-pointer"
-                >
-                  {timezone.label}
-                  <CheckIcon
-                    className={cn(
-                      "ml-auto h-4 w-4",
-                      value === timezone.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
+                <TimezoneCommandItem
+                  key={timezone.value}
+                  timezone={timezone}
+                  onSelect={onSelect}
+                  current={value}
+                />
               ))}
             </CommandGroup>
           </CommandList>
@@ -117,3 +134,31 @@ export function TimezoneDropdown({
     </Popover>
   );
 }
+
+const TimezoneCommandItem = ({
+  timezone,
+  onSelect,
+  current,
+  children,
+}: {
+  timezone: TZ;
+  onSelect: (cv: string) => void;
+  current: string;
+  children?: React.ReactNode;
+}) => (
+  <CommandItem
+    key={timezone.value + timezone.label}
+    value={timezone.value}
+    onSelect={onSelect}
+    className="cursor-pointer"
+  >
+    {children}
+    {timezone.label}
+    <CheckIcon
+      className={cn(
+        "ml-auto h-4 w-4",
+        current === timezone.value ? "opacity-100" : "opacity-0"
+      )}
+    />
+  </CommandItem>
+);
