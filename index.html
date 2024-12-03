@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+  <meta charSet="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Reset default margin and padding */
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    /* Make iframe fill the entire viewport */
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+
+<body>
+  <iframe id="bookingFrame" title="Let's Chat!"></iframe>
+  <script src="config.js"></script>
+  <script>
+    document.getElementById('bookingFrame').src = CONFIG.SCRIPT_URL;
+  </script>
+</body>
+
+</html>
