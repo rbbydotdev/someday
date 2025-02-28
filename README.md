@@ -15,7 +15,8 @@ Someday is a simple, open-source scheduling tool designed specifically for Gmail
 
 ### Key Features
 
-- **Free and Open Source**: Someday is completely free to use and open for contributions.
+- **Free to Host**: Using google app scripts, hosting is free via your google account.
+- **Open Source**: Someday is completely free to use and open for contributions.
 - **Effortless Integration**: Designed as a Google Apps Script, Someday integrates seamlessly with your Gmail, making it easy to manage your schedule directly from your inbox.
 - **Developer-Friendly**: Built with modern, developer-preferred technologies, Someday is easy to customize and extend to meet your specific needs.
 - **Customizable Work Hours**: Set your availability with precision, allowing others to book time slots that fit your schedule perfectly.
