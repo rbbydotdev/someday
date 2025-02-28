@@ -1,4 +1,4 @@
-const CALENDAR = "primary";
+const CALENDARS: string[] = JSON.parse(PropertiesService.getScriptProperties().getProperty('CALENDARS') ?? '["primary"]');
 const TIME_ZONE = "America/Los_Angeles";
 //  America/Los_Angeles
 //  America/Denver
@@ -29,7 +29,6 @@ function fetchAvailability(): {
   const nearestTimeslot = new Date(
     Math.floor(new Date().getTime() / TSDURMS) * TSDURMS
   );
-  const calendarId = CALENDAR;
   const now = nearestTimeslot;
   const end = new Date(
     Date.UTC(
@@ -42,15 +41,18 @@ function fetchAvailability(): {
   const response = Calendar.Freebusy!.query({
     timeMin: now.toISOString(),
     timeMax: end.toISOString(),
-    items: [{ id: calendarId }],
+    items: CALENDARS.map((id: string) => ({ id })),
   });
 
-  const events = (
-    (response as any).calendars[calendarId].busy as {
+  const events = CALENDARS.map((calendarId: string) => 
+    ((response as any).calendars[calendarId].busy as {
       start: string;
       end: string;
-    }[]
-  ).map(({ start, end }) => ({ start: new Date(start), end: new Date(end) }));
+    }[]).map(({ start, end }) => ({ 
+      start: new Date(start), 
+      end: new Date(end) 
+    }))
+  ).reduce((acc, curr) => acc.concat(curr), []);
   //get all timeslots between now and end date
   const timeslots = [];
   for (
@@ -66,7 +68,7 @@ function fetchAvailability(): {
     if (startTZ.getHours() < WORKHOURS.start) continue;
     if (startTZ.getHours() >= WORKHOURS.end) continue;
     if (WORKDAYS.indexOf(startTZ.getDay()) < 0) continue;
-    if (events.some((event) => event.start < end && event.end > start)) {
+    if (events.some((event: { start: Date; end: Date }) => event.start < end && event.end > start)) {
       continue;
     }
     timeslots.push(start.toISOString());
@@ -82,7 +84,7 @@ function bookTimeslot(
   note: string
 ): string {
   Logger.log(`Booking timeslot: ${timeslot} for ${name}`);
-  const calendarId = CALENDAR;
+  const calendarId = CALENDARS[0];
   const startTime = new Date(timeslot);
   if (isNaN(startTime.getTime())) {
     throw new Error("Invalid start time");
@@ -96,18 +98,14 @@ function bookTimeslot(
     const possibleEvents = Calendar.Freebusy!.query({
       timeMin: startTime.toISOString(),
       timeMax: endTime.toISOString(),
-      items: [{ id: calendarId }],
+      items: CALENDARS.map((id: string) => ({ id })),
     });
 
-    const busy = (possibleEvents as any).calendars[calendarId].busy;
+    const hasConflict = CALENDARS.some((calId: string) => 
+      (possibleEvents as any).calendars[calId].busy.length > 0
+    );
 
-    if (
-      busy.some((event: { start: Date; end: Date }) => {
-        const eventStart = new Date(event.start.toString());
-        const eventEnd = new Date(event.end.toString());
-        return eventStart <= endTime && eventEnd >= startTime;
-      })
-    ) {
+    if (hasConflict) {
       throw new Error("Timeslot not available");
     }
 
