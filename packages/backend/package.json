@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "tsc && cp src/configuration.gs dist/",
     "push": "clasp push",
     "deploy": "npm run build && npm run push"
   },
