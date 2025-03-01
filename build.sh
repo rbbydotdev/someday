@@ -2,7 +2,7 @@
 set -e
 
 echo "Building backend..."
-pushd backend
+pushd packages/backend
 #if node_modules doesn't exist, npm install
 if [ ! -d "node_modules" ]; then
   npm install
@@ -10,7 +10,7 @@ fi
 npm run build
 popd
 echo "Backend built successfully!"
-pushd frontend
+pushd packages/frontend
 if [ ! -d "node_modules" ]; then
   npm install
 fi
@@ -19,7 +19,7 @@ popd
 echo "Frontend built successfully!"
 mkdir -p dist
 rm -rf dist/*
-cp backend/dist/* dist/
-cp frontend/dist/* dist/
+cp packages/backend/dist/* dist/
+cp packages/frontend/dist/* dist/
 
 echo "Build complete!"
