@@ -10,6 +10,7 @@ fi
 npm run build
 popd
 echo "Backend built successfully!"
+
 pushd packages/frontend
 if [ ! -d "node_modules" ]; then
   npm install
@@ -17,9 +18,20 @@ fi
 npm run build
 popd
 echo "Frontend built successfully!"
-mkdir -p dist
-rm -rf dist/*
-cp packages/backend/dist/* dist/
-cp packages/frontend/dist/* dist/
+
+pushd packages/cli
+if [ ! -d "node_modules" ]; then
+  npm install
+fi
+npm run build
+popd
+echo "CLI built successfully!"
+
+rm -rf packages/cli/dist/google_apps_script/
+mkdir -p packages/cli/dist/google_apps_script/
+
+cp packages/backend/dist/* packages/cli/dist/google_apps_script/
+cp packages/frontend/dist/* packages/cli/dist/google_apps_script/
+mv packages/cli/dist/appsscript.json packages/cli/dist/google_apps_script/
 
 echo "Build complete!"

@@ -8,7 +8,7 @@ declare function getConfiguration(): {
 };
 
 function doGet(): GoogleAppsScript.HTML.HtmlOutput {
-  return HtmlService.createHtmlOutputFromFile("dist/index")
+  return HtmlService.createHtmlOutputFromFile("index")
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag("viewport", "width=device-width, initial-scale=1");
 }

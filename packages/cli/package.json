@@ -1,0 +1,19 @@
+{
+  "name": "cli",
+  "version": "0.1.0",
+  "bin": "dist/cli.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "mkdir -p dist/ && cp src/* dist/"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@clack/prompts": "^0.10.0",
+    "@google/clasp": "^2.5.0",
+    "commander": "^13.1.0",
+    "googleapis": "^144.0.0"
+  }
+}
