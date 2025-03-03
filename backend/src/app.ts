@@ -1,4 +1,14 @@
-const CALENDARS: string[] = JSON.parse(PropertiesService.getScriptProperties().getProperty('CALENDARS') ?? '["primary"]');
+const CALENDARS: string[] = (() => {
+  const calendarsProp = PropertiesService.getScriptProperties().getProperty('CALENDARS');
+  try {
+    if (!calendarsProp) return ["primary"];
+    const parsed = JSON.parse(calendarsProp);
+    return Array.isArray(parsed) ? parsed : ["primary"];
+  } catch (e) {
+    Logger.log(`Error parsing CALENDARS property: ${e}`);
+    return ["primary"];
+  }
+})();
 const TIME_ZONE = "America/Los_Angeles";
 //  America/Los_Angeles
 //  America/Denver
@@ -44,15 +54,15 @@ function fetchAvailability(): {
     items: CALENDARS.map((id: string) => ({ id })),
   });
 
-  const events = CALENDARS.map((calendarId: string) => 
-    ((response as any).calendars[calendarId].busy as {
-      start: string;
-      end: string;
-    }[]).map(({ start, end }) => ({ 
+  const events = CALENDARS.map((calendarId: string) => {
+    const busyTimes = (response as any).calendars[calendarId].busy;
+    Logger.log(`Busy times for ${calendarId}: ${JSON.stringify(busyTimes)}`);
+    return busyTimes.map(({ start, end }: { start: string; end: string }) => ({ 
       start: new Date(start), 
       end: new Date(end) 
-    }))
-  ).reduce((acc, curr) => acc.concat(curr), []);
+    }));
+  }).reduce((acc, curr) => acc.concat(curr), []);
+
   //get all timeslots between now and end date
   const timeslots = [];
   for (
@@ -83,7 +93,6 @@ function bookTimeslot(
   phone: string,
   note: string
 ): string {
-  Logger.log(`Booking timeslot: ${timeslot} for ${name}`);
   const calendarId = CALENDARS[0];
   const startTime = new Date(timeslot);
   if (isNaN(startTime.getTime())) {
@@ -91,8 +100,6 @@ function bookTimeslot(
   }
   const endTime = new Date(startTime.getTime());
   endTime.setUTCMinutes(startTime.getUTCMinutes() + TIMESLOT_DURATION);
-
-  Logger.log(`Timeslot start: ${startTime}, end: ${endTime}`);
 
   try {
     const possibleEvents = Calendar.Freebusy!.query({
@@ -120,11 +127,9 @@ function bookTimeslot(
         status: "confirmed",
       }
     );
-    Logger.log(`Event created: ${event.getId()}`);
     return `Timeslot booked successfully`;
   } catch (e) {
     const error = e as Error;
-    Logger.log(`Failed to create event: ${error.message}`);
     throw new Error(`Failed to create event: ${error.message}`);
   }
 }
