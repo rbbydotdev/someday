@@ -116,6 +116,11 @@ __you may need to sign out of all accounts, and only into your target account__
    - To use other calendars, make sure they are added to your Google Calendar with appropriate permissions
    - You can change which calendar to use by modifying the `CALENDAR` variable in `backend/src/app.ts`
    - Note: The script needs at least read access to the calendar you specify
+   - To use multiple calendars, you'll need to add them as Script Properties in the Apps Script editor:
+     1. Open the script editor with `clasp open`
+     2. Go to Project Settings (⚙️ icon)
+     3. Under "Script Properties", click "Add Script Property"
+     4. Add a property named "CALENDARS" with a comma-separated list of calendar IDs
 
 ## Cheat Sheet
 
