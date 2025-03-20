@@ -1,3 +1,4 @@
+import { GoogleLib } from "@/lib/googlelib";
 import { useCallback, useState } from "react";
 
 export function useBookGoogleTimeslot() {
@@ -24,8 +25,7 @@ export function useBookGoogleTimeslot() {
   }) {
     try {
       setStatus("pending");
-      //@ts-expect-error google.script.run is not typed
-      google.script.run
+      GoogleLib.google.script.run
         .withSuccessHandler(function () {
           setStatus("success");
         })
@@ -37,15 +37,9 @@ export function useBookGoogleTimeslot() {
         })
         .bookTimeslot(timeslot.toISOString(), name, email, phone, note);
     } catch (err) {
-      if (process.env.NODE_ENV === "development") {
-        setStatus("success");
-      } else {
-        console.error(err);
-        setStatus("error");
-        setError(
-          new Error("Could not book timeslot, please try again - " + err)
-        );
-      }
+      console.error(err);
+      setStatus("error");
+      setError(new Error("Could not book timeslot, please try again - " + err));
     }
   },
   []);
