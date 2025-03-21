@@ -10,5 +10,4 @@
 .git/**
 node_modules/**
 src/**
-frontend/**
-backend/**
+packages/**

@@ -9,6 +9,6 @@
     "skipLibCheck": true,
     "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src/**/*.ts", "../backup.ignore.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
