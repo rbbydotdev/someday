@@ -9,7 +9,6 @@
     "deploy": "./deploy.sh"
   },
   "author": "",
-  "license": "ISC",
   "description": "",
   "dependencies": {
     "@date-fns/tz": "^1.2.0"
