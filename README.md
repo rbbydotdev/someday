@@ -1,5 +1,7 @@
 # Someday
 
+<img src="./someday-logo.svg" width="250" alt="someday logo"/>
+
 **Free to host calendar availability picker - open-source cal.com / calendly alternative built on [Google-Apps-Script](https://developers.google.com/apps-script) for Gmail users.**
 
 <img src="./screencap1.jpg" width="350" />
