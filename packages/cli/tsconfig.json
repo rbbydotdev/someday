@@ -1,13 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES5",
-    "module": "none",
-    "outDir": "dist",
+    "target": "ESNext",
+    "module": "ESnext",
+    "moduleResolution": "node",
+    "outDir": "bin",
     "rootDir": "src",
     "strict": true,
     "lib": ["ES5"],
     "skipLibCheck": true,
     "typeRoots": ["node_modules/@types"]
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "verbose": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

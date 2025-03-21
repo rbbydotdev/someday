@@ -3,4 +3,5 @@ export default {
   permissions: 2,
   unknown: 3,
   userCancelled: 4,
+  missingDependency: 5,
 };
