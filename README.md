@@ -2,9 +2,9 @@
 <p align="center">
 <img src="./someday-logo.svg" width="250" alt="someday logo"/>
 </p>
+
 **Free to host calendar availability picker - open-source cal.com / calendly alternative built on [Google-Apps-Script](https://developers.google.com/apps-script) for Gmail users.**
 
-<img src="./screencap1.jpg" width="350" />
 
 ## Demo (mocked endpoints)
 
@@ -140,6 +140,7 @@ __you may need to sign out of all accounts, and only into your target account__
 
 <img src="./screencap1.jpg" width="350" />
 <img src="./screencap2.jpg" width="350" />
+
 
 ## Contributing
 
