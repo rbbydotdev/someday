@@ -1,4 +1,3 @@
-
 # Someday
 
 **Free to host calendar availability picker - open-source cal.com / calendly alternative built on [Google-Apps-Script](https://developers.google.com/apps-script) for Gmail users.**
@@ -111,6 +110,17 @@ __you may need to sign out of all accounts, and only into your target account__
    - in the drop down at the top, select `fetchAvailability` then hit run
    - Authorization modal will pop up, 'Review permissions', select your account, you will see a warning, go to advanced, then Go to <your script>(unsafe) then click Allow
    - if it worked, refresh the page/editor then run the function again and it should complete without issue.
+
+5. **Calendar Access:**
+   - By default, the script uses your primary calendar
+   - To use other calendars, make sure they are added to your Google Calendar with appropriate permissions
+   - You can change which calendar to use by modifying the `CALENDAR` variable in `backend/src/app.ts`
+   - Note: The script needs at least read access to the calendar you specify
+   - To use multiple calendars, you'll need to add them as Script Properties in the Apps Script editor:
+     1. Open the script editor with `clasp open`
+     2. Go to Project Settings (⚙️ icon)
+     3. Under "Script Properties", click "Add Script Property"
+     4. Add a property named "CALENDARS" with a comma-separated list of calendar IDs
 
 ## Cheat Sheet
 
