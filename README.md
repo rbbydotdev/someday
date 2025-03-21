@@ -64,7 +64,7 @@ __you may need to sign out of all accounts, and only into your target account__
    - Ensure you have Node.js installed.
    - Install `clasp` globally using npm:
      ```bash
-     npm install -g @google/clasp
+     npm install -g @google/clasp@^2.5.0
      ```
 
 2. **Login with `clasp`:**
