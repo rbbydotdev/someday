@@ -234,7 +234,7 @@ export function CalendarPicker() {
             </Show>
             <Else>
               <Button
-                className="w-full mt-8"
+                className="w-full"
                 onClick={() => setShowForm(true)}
                 disabled={!selectedDate || !selectedTimeSlot}
               >
@@ -271,7 +271,7 @@ function CalendarTimeslotPicker({
   handleTimeSlotSelect: (timeSlot: Date) => void;
 }) {
   return (
-    <div className="flex flex-col sm:flex-row gap-6">
+    <div className="flex flex-col sm:flex-row gap-6 min-h-[350px]">
       <div className="flex-1">
         <div className="flex items-center justify-between mb-4">
           <Button variant="outline" size="icon" onClick={handlePreviousMonth}>

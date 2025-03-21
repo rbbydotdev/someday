@@ -1,6 +1,6 @@
+import { GoogleLib } from "@/lib/googlelib";
 import { useCallback, useEffect, useState } from "react";
 
-import { generateDummyData } from "@/hooks/dummydata";
 export function useGoogleTimeslots() {
   const [availableGoogleSlots, setAvailableGoogleSlots] = useState<Date[]>([]);
   const [durationMinutes, setDurationMinutes] = useState(30);
@@ -16,8 +16,7 @@ export function useGoogleTimeslots() {
   useEffect(() => {
     try {
       setStatus("pending");
-      //@ts-expect-error google.script.run is not typed
-      google.script.run
+      GoogleLib.google.script.run
         .withSuccessHandler(function ({
           timeslots,
           durationMinutes,
@@ -36,16 +35,9 @@ export function useGoogleTimeslots() {
         })
         .fetchAvailability();
     } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        setStatus("success");
-        const dummyData = generateDummyData();
-        setAvailableGoogleSlots(dummyData.map((d) => new Date(d)));
-        console.log("Using dummy data", dummyData);
-      } else {
-        console.error(error);
-        setStatus("error");
-        setError(error as Error);
-      }
+      console.error(error);
+      setStatus("error");
+      setError(error as Error);
     }
   }, []);
 
