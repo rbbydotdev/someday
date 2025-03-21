@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./build.sh",
+    "build:demo": "cd ./frontend && npm run build:demo",
     "deploy": "./deploy.sh"
   },
   "author": "",
