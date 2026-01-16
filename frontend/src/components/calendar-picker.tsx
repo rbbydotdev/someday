@@ -18,7 +18,7 @@ import { useGoogleTimeslots } from "@/hooks/useGoogleTimeslots";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Else, Show, When } from "@/components/WhenShowElse";
 import { Timeslots } from "@/models/Timeslots";
-import { addMonths, format } from "date-fns";
+import { addMonths, format, startOfMonth } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import {
   ArrowLeft,
@@ -26,12 +26,13 @@ import {
   ChevronRight,
   Loader2,
   Send,
+  Settings,
 } from "lucide-react";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useTimezoneDropdown } from "./timezone-dropdown";
 
-export function CalendarPicker() {
+export function CalendarPicker({ onOpenConfig }: { onOpenConfig?: () => void }) {
   const [TimezoneDropdown, timezone] = useTimezoneDropdown();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<Date | undefined>(
@@ -59,7 +60,7 @@ export function CalendarPicker() {
   }, [timezone]);
   useEffect(() => {
     if (!selectedDate) {
-      const firstTimeslot = [...availableSlots.timeslots].sort().reverse()[0];
+      const firstTimeslot = availableSlots.allZoned()[0];
       if (!firstTimeslot) return;
       setCurrentMonth(firstTimeslot);
     }
@@ -147,8 +148,22 @@ export function CalendarPicker() {
           </Show>
         </When>
         <div className="relative max-h-0">
-          <ModeToggle className="md:hidden absolute right-1 top-1" />
-          <ModeToggle className="absolute -right-10 -top-10 md:block hidden" />
+          <div className="md:hidden absolute right-1 top-1 flex flex-col gap-2">
+            <ModeToggle />
+            {onOpenConfig && (
+              <Button variant="outline" size="icon" onClick={onOpenConfig}>
+                <Settings className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+          <div className="absolute -right-10 -top-10 md:flex hidden flex-col gap-1">
+            <ModeToggle />
+            {onOpenConfig && (
+              <Button variant="outline" size="icon" onClick={onOpenConfig}>
+                <Settings className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
         <When condition={!showForm}>
           <Show>
@@ -183,9 +198,9 @@ export function CalendarPicker() {
               at{" "}
               {selectedTimeSlot
                 ? selectedTimeSlot.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
                 : "Time not selected"}
             </h2>
           </Else>
@@ -270,21 +285,40 @@ function CalendarTimeslotPicker({
   selectedTimeSlot: Date | undefined;
   handleTimeSlotSelect: (timeSlot: Date) => void;
 }) {
+  const zonedSlots = availableSlots.allZoned();
+  const firstSlot = zonedSlots[0];
+  const lastSlot = zonedSlots[zonedSlots.length - 1];
+
+  const canGoBack =
+    firstSlot &&
+    startOfMonth(firstSlot).getTime() < startOfMonth(currentMonth).getTime();
+  const canGoForward =
+    lastSlot &&
+    startOfMonth(lastSlot).getTime() > startOfMonth(currentMonth).getTime();
+
   return (
     <div className="flex flex-col sm:flex-row gap-6 min-h-[350px]">
       <div className="flex-1">
         <div className="flex items-center justify-between mb-4">
-          <Button variant="outline" size="icon" onClick={handlePreviousMonth}>
-            <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Previous month</span>
-          </Button>
+          {canGoBack ? (
+            <Button variant="outline" size="icon" onClick={handlePreviousMonth}>
+              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Previous month</span>
+            </Button>
+          ) : (
+            <div className="w-9 h-9" />
+          )}
           <h2 className="text-lg font-semibold">
             {format(currentMonth, "MMMM yyyy")}
           </h2>
-          <Button variant="outline" size="icon" onClick={handleNextMonth}>
-            <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Next month</span>
-          </Button>
+          {canGoForward ? (
+            <Button variant="outline" size="icon" onClick={handleNextMonth}>
+              <ChevronRight className="h-4 w-4" />
+              <span className="sr-only">Next month</span>
+            </Button>
+          ) : (
+            <div className="w-9 h-9" />
+          )}
         </div>
         <Calendar
           mode="single"
@@ -294,6 +328,8 @@ function CalendarTimeslotPicker({
           onMonthChange={setCurrentMonth}
           className="rounded-md border shadow"
           disabled={isDayDisabled}
+          fromDate={firstSlot}
+          toDate={lastSlot}
         />
       </div>
       <div className="flex-1 w-full lg:w-64">

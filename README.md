@@ -16,33 +16,39 @@ Someday is a simple, open-source scheduling tool designed specifically for Gmail
 
 ### Key Features
 
-- **Free to Host**: Using Google Apps Script, hosting is free via your google account.
+- **Free to Host**: Using Google Apps Script, hosting is free via your Google account.
 - **Open Source**: Someday is completely free to use and open for contributions.
 - **Effortless Integration**: Designed as a Google Apps Script, Someday integrates seamlessly with your Gmail, making it easy to manage your schedule directly from your inbox.
-- **Developer-Friendly**: Built with modern, developer-preferred technologies, Someday is easy to customize and extend to meet your specific needs.
-- **Customizable Work Hours**: Set your availability with precision, allowing others to book time slots that fit your schedule perfectly.
+- **Developer-Friendly**: Built with modern, developer-preferred technologies, Someday is easy to customize and extend.
+- **Dynamic Configuration**: Adjust your timezone, working hours, available days, and monitored calendars directly through the integrated Settings screen.
+- **Owner-Only Access**: Secure access to configuration via the script owner's Google account session.
 - **Simple Booking Process**: Users can select a date and time slot, then fill out a straightforward form with their name, email, phone, and an optional note.
-- **Privacy First**: No data sharing beyond google to 3rd party apps
+- **Privacy First**: No data sharing beyond Google to 3rd party apps.
 
 ## Getting Started
 
-### Customize 
+### Configuration
 
-Change the following variables in `backend/src/app.ts` to customize your availability settings:
+Someday includes a built-in **Settings** screen for easy configuration.
 
-```typescript
-// backend/src/app.ts
-const CALENDAR = "primary";
-const TIME_ZONE = "America/New_York";
-const WORKDAYS = [1, 2, 3, 4, 5];
-const WORKHOURS = {
-  start: 9,
-  end: 13,
-};
-const TIMESLOT_DURATION = 30;
-```
+1. **Accessing Settings**:
+   - Once deployed, open your web app URL.
+   - If you are the person who deployed the script (the **Owner**), you will see a **gear icon** ⚙️ next to the theme toggle.
+   - **Note**: Google Apps Script owner recognition may fail if you are logged into multiple Google accounts in the same browser. To see the settings icon, ensure you are logged into **only one account** or use an **Incognito/Private window** and log into the account you deployed the script with.
+   - Click the gear icon to open the configuration screen.
 
-### Self host iframe html / remove google app scripts banner
+2. **Configurable Settings**:
+   - **Time Zone**: Set your primary time zone for availability calculations.
+   - **Scheduling Window**: Control how many days into the future users can book (up to 90 days).
+   - **Work Hours**: Define your daily window of availability.
+   - **Available Days**: Select which days of the week you accept bookings.
+   - **Monitored Calendars**: Choose multiple calendars to check for conflicts (e.g., Personal, Work, Holidays).
+   - **Timeslot Duration**: Set the length of each appointment slot (up to 24 hours).
+
+3. **Backend Defaults**:
+   To change the fallback defaults, you can modify the `CONFIG` object initialization in `backend/src/app.ts`.
+
+### Self host iframe html / remove Google App Scripts banner
 
 - Google apps script has a banner that says "This application was created by a Google Apps Script user", to remove you can host the html file yourself and embed the script as an iframe
 
@@ -114,15 +120,9 @@ __you may need to sign out of all accounts, and only into your target account__
    - if it worked, refresh the page/editor then run the function again and it should complete without issue.
 
 5. **Calendar Access:**
-   - By default, the script uses your primary calendar
-   - To use other calendars, make sure they are added to your Google Calendar with appropriate permissions
-   - You can change which calendar to use by modifying the `CALENDAR` variable in `backend/src/app.ts`
-   - Note: The script needs at least read access to the calendar you specify
-   - To use multiple calendars, you'll need to add them as Script Properties in the Apps Script editor:
-     1. Open the script editor with `clasp open`
-     2. Go to Project Settings (⚙️ icon)
-     3. Under "Script Properties", click "Add Script Property"
-     4. Add a property named "CALENDARS" with a comma-separated list of calendar IDs
+   - By default, the script uses your primary calendar.
+   - You can manage multiple calendars directly through the **Settings** screen in the UI.
+   - The script needs at least read access to any calendar you monitor for conflicts.
 
 ## Cheat Sheet
 

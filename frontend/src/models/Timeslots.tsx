@@ -6,7 +6,7 @@ export class Timeslots {
     public readonly timeslots: Date[],
     public readonly timezone: string
   ) {
-    this.timeslots.sort();
+    this.timeslots.sort((a, b) => a.getTime() - b.getTime());
   }
   allZoned() {
     return (this.cache.allzoned =
