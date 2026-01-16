@@ -26,12 +26,13 @@ import {
   ChevronRight,
   Loader2,
   Send,
+  Settings,
 } from "lucide-react";
 import * as React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useTimezoneDropdown } from "./timezone-dropdown";
 
-export function CalendarPicker() {
+export function CalendarPicker({ onOpenConfig }: { onOpenConfig?: () => void }) {
   const [TimezoneDropdown, timezone] = useTimezoneDropdown();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<Date | undefined>(
@@ -147,8 +148,22 @@ export function CalendarPicker() {
           </Show>
         </When>
         <div className="relative max-h-0">
-          <ModeToggle className="md:hidden absolute right-1 top-1" />
-          <ModeToggle className="absolute -right-10 -top-10 md:block hidden" />
+          <div className="md:hidden absolute right-1 top-1 flex flex-col gap-2">
+            <ModeToggle />
+            {onOpenConfig && (
+              <Button variant="outline" size="icon" onClick={onOpenConfig}>
+                <Settings className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+          <div className="absolute -right-10 -top-10 md:flex hidden flex-col gap-1">
+            <ModeToggle />
+            {onOpenConfig && (
+              <Button variant="outline" size="icon" onClick={onOpenConfig}>
+                <Settings className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
         <When condition={!showForm}>
           <Show>
@@ -183,9 +198,9 @@ export function CalendarPicker() {
               at{" "}
               {selectedTimeSlot
                 ? selectedTimeSlot.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
                 : "Time not selected"}
             </h2>
           </Else>
