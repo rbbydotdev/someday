@@ -10,17 +10,14 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
+interface GoogleRun {
+  withSuccessHandler: (cb: (data: any) => void) => GoogleRun;
+  withFailureHandler: (cb: (error: any) => void) => GoogleRun;
+  [key: string]: any;
+}
+
 interface GoogleLib {
   script: {
-    run: {
-      withSuccessHandler: (
-        cb: (arg0: { timeslots: string[]; durationMinutes: number }) => void
-      ) => {
-        withFailureHandler: (_cb: any) => {
-          fetchAvailability: () => void;
-          bookTimeslot: (...args: any[]) => void;
-        };
-      };
-    };
+    run: GoogleRun;
   };
 }

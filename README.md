@@ -20,7 +20,8 @@ Someday is a simple, open-source scheduling tool designed specifically for Gmail
 - **Open Source**: Someday is completely free to use and open for contributions.
 - **Effortless Integration**: Designed as a Google Apps Script, Someday integrates seamlessly with your Gmail, making it easy to manage your schedule directly from your inbox.
 - **Developer-Friendly**: Built with modern, developer-preferred technologies, Someday is easy to customize and extend.
-- **Dynamic Configuration**: Adjust your timezone, working hours, available days, and monitored calendars directly through the integrated Settings screen.
+- **Multiple Event Types**: Create diverse meeting options like "Quick Chat" or "Deep Dive" with unique durations and availability settings.
+- **Dynamic Configuration**: Adjust your timezone, working hours, available days, and monitored calendars globally or per event type directly through the integrated Settings screen.
 - **Owner-Only Access**: Secure access to configuration via the script owner's Google account session.
 - **Simple Booking Process**: Users can select a date and time slot, then fill out a straightforward form with their name, email, phone, and an optional note.
 - **Privacy First**: No data sharing beyond Google to 3rd party apps.
@@ -38,12 +39,20 @@ Someday includes a built-in **Settings** screen for easy configuration.
    - Click the gear icon to open the configuration screen.
 
 2. **Configurable Settings**:
+   
+   **Global Defaults**:
    - **Time Zone**: Set your primary time zone for availability calculations.
    - **Scheduling Window**: Control how many days into the future users can book (up to 90 days).
-   - **Work Hours**: Define your daily window of availability.
-   - **Available Days**: Select which days of the week you accept bookings.
+   - **Work Hours**: Define your standard daily window of availability.
+   - **Available Days**: Select which days of the week you normally accept bookings.
    - **Monitored Calendars**: Choose multiple calendars to check for conflicts (e.g., Personal, Work, Holidays).
-   - **Timeslot Duration**: Set the length of each appointment slot (up to 24 hours).
+
+   **Event Types**:
+   - **Custom Meeting Types**: Create unlimited event types (e.g. "15 Min Discovery", "1 Hour Review").
+   - **Flexible Durations**: Set specific lengths for each meeting type (up to 24 hours).
+   - **Smart Overrides**: Override global Work Hours, Available Days, and Monitored Calendars for specific event types.
+   - **Direct Links**: Copy a unique booking URL for any event type to share directly.
+   - **Visibility Controls**: Toggle which event types are displayed on your main public scheduling page.
 
 3. **Backend Defaults**:
    To change the fallback defaults, you can modify the `CONFIG` object initialization in `backend/src/app.ts`.
@@ -126,8 +135,7 @@ __you may need to sign out of all accounts, and only into your target account__
 
 ## Cheat Sheet
 
-- `npm run deploy` - build and delpoy
-
+- `npm run deploy` - build and deploy
 - `npm run build` - build only
 
 - `undeployall.sh` - undeploy all versions of the script

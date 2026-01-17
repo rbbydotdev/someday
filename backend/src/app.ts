@@ -1,11 +1,35 @@
 const props = PropertiesService.getScriptProperties();
 
+interface EventType {
+  id: string;
+  name: string;
+  duration: number;
+  selectable: boolean;
+  description?: string;
+  WORKDAYS?: number[];
+  WORKHOURS?: { start: number; end: number };
+  DAYS_IN_ADVANCE?: number;
+  CALENDARS?: string[];
+}
+
 const CONFIG = {
   TIME_ZONE: props.getProperty('TIME_ZONE') || "America/New_York",
   WORKDAYS: JSON.parse(props.getProperty('WORKDAYS') || "[1, 2, 3, 4, 5]"),
   WORKHOURS: JSON.parse(props.getProperty('WORKHOURS') || '{"start": 9, "end": 16}'),
   DAYS_IN_ADVANCE: parseInt(props.getProperty('DAYS_IN_ADVANCE') || "28", 10),
-  TIMESLOT_DURATION: parseInt(props.getProperty('TIMESLOT_DURATION') || "30", 10),
+  EVENT_TYPES: (() => {
+    const etProp = props.getProperty('EVENT_TYPES');
+    if (etProp) return JSON.parse(etProp) as EventType[];
+
+    // Migration from legacy TIMESLOT_DURATION
+    const legacyDuration = parseInt(props.getProperty('TIMESLOT_DURATION') || "30", 10);
+    return [{
+      id: "default",
+      name: "Appointment",
+      duration: legacyDuration,
+      selectable: true
+    }] as EventType[];
+  })(),
   CALENDARS: (() => {
     const calendarsProp = props.getProperty('CALENDARS');
     try {
@@ -17,8 +41,6 @@ const CONFIG = {
     }
   })()
 };
-
-const TSDURMS = CONFIG.TIMESLOT_DURATION * 60000;
 
 function isOwner(): boolean {
   try {
@@ -33,17 +55,21 @@ function isOwner(): boolean {
 }
 
 function getConfig() {
-  if (!isOwner()) {
-    throw new Error("Unauthorized: Only the script owner can access configuration.");
-  }
-  return {
+  const config = {
     TIME_ZONE: CONFIG.TIME_ZONE,
     WORKDAYS: CONFIG.WORKDAYS,
     WORKHOURS: CONFIG.WORKHOURS,
     DAYS_IN_ADVANCE: CONFIG.DAYS_IN_ADVANCE,
-    TIMESLOT_DURATION: CONFIG.TIMESLOT_DURATION,
+    EVENT_TYPES: CONFIG.EVENT_TYPES,
     CALENDARS: CONFIG.CALENDARS,
   };
+
+  if (!isOwner()) {
+    // Return safe public config for visitors
+    return { ...config, CALENDARS: [] };
+  }
+
+  return config;
 }
 
 function setConfig(newConfig: Partial<typeof CONFIG>) {
@@ -55,7 +81,7 @@ function setConfig(newConfig: Partial<typeof CONFIG>) {
   if (newConfig.WORKDAYS) props.setProperty('WORKDAYS', JSON.stringify(newConfig.WORKDAYS));
   if (newConfig.WORKHOURS) props.setProperty('WORKHOURS', JSON.stringify(newConfig.WORKHOURS));
   if (newConfig.DAYS_IN_ADVANCE !== undefined) props.setProperty('DAYS_IN_ADVANCE', newConfig.DAYS_IN_ADVANCE.toString());
-  if (newConfig.TIMESLOT_DURATION !== undefined) props.setProperty('TIMESLOT_DURATION', newConfig.TIMESLOT_DURATION.toString());
+  if (newConfig.EVENT_TYPES) props.setProperty('EVENT_TYPES', JSON.stringify(newConfig.EVENT_TYPES));
   if (newConfig.CALENDARS) props.setProperty('CALENDARS', JSON.stringify(newConfig.CALENDARS));
 
   return { success: true };
@@ -72,35 +98,50 @@ function listCalendars() {
   }));
 }
 
+function getScriptUrl(): string {
+  return ScriptApp.getService().getUrl();
+}
+
 function doGet(): GoogleAppsScript.HTML.HtmlOutput {
   return HtmlService.createHtmlOutputFromFile("dist/index")
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag("viewport", "width=device-width, initial-scale=1");
 }
 
-function fetchAvailability(): {
+function fetchAvailability(eventTypeId?: string): {
   timeslots: string[];
   durationMinutes: number;
 } {
+  const eventType = CONFIG.EVENT_TYPES.find((et: EventType) => et.id === eventTypeId) || CONFIG.EVENT_TYPES[0];
+  const durationMinutes = eventType.duration;
+  const durationMs = durationMinutes * 60000;
+
+  // Use event-specific overrides or fall back to global CONFIG
+  const timeZone = CONFIG.TIME_ZONE;
+  const workDays = eventType.WORKDAYS ?? CONFIG.WORKDAYS;
+  const workHours = eventType.WORKHOURS ?? CONFIG.WORKHOURS;
+  const daysInAdvance = eventType.DAYS_IN_ADVANCE ?? CONFIG.DAYS_IN_ADVANCE;
+  const calendarsToQuery = eventType.CALENDARS ?? CONFIG.CALENDARS;
+
   const nearestTimeslot = new Date(
-    Math.floor(new Date().getTime() / TSDURMS) * TSDURMS
+    Math.floor(new Date().getTime() / durationMs) * durationMs
   );
   const now = nearestTimeslot;
   const end = new Date(
     Date.UTC(
       now.getUTCFullYear(),
       now.getUTCMonth(),
-      now.getUTCDate() + CONFIG.DAYS_IN_ADVANCE
+      now.getUTCDate() + daysInAdvance
     )
   );
 
   const response = Calendar.Freebusy!.query({
     timeMin: now.toISOString(),
     timeMax: end.toISOString(),
-    items: CONFIG.CALENDARS.map((id: string) => ({ id })),
+    items: calendarsToQuery.map((id: string) => ({ id })),
   });
 
-  const events = CONFIG.CALENDARS.map((calendarId: string) => {
+  const events = calendarsToQuery.map((calendarId: string) => {
     const busyTimes = (response as any).calendars[calendarId].busy;
     Logger.log(`Busy times for ${calendarId}: ${JSON.stringify(busyTimes)}`);
     return busyTimes.map(({ start, end }: { start: string; end: string }) => ({
@@ -113,23 +154,23 @@ function fetchAvailability(): {
   const timeslots = [];
   for (
     let t = nearestTimeslot.getTime();
-    t + TSDURMS <= end.getTime();
-    t += TSDURMS
+    t + durationMs <= end.getTime();
+    t += durationMs
   ) {
     const start = new Date(t);
-    const end = new Date(t + TSDURMS);
+    const endTime = new Date(t + durationMs);
     const startTZ = new Date(
-      Utilities.formatDate(start, CONFIG.TIME_ZONE, "yyyy-MM-dd'T'HH:mm:ss")
+      Utilities.formatDate(start, timeZone, "yyyy-MM-dd'T'HH:mm:ss")
     );
-    if (startTZ.getHours() < CONFIG.WORKHOURS.start) continue;
-    if (startTZ.getHours() >= CONFIG.WORKHOURS.end) continue;
-    if (CONFIG.WORKDAYS.indexOf(startTZ.getDay()) < 0) continue;
-    if (events.some((event: { start: Date; end: Date }) => event.start < end && event.end > start)) {
+    if (startTZ.getHours() < workHours.start) continue;
+    if (startTZ.getHours() >= workHours.end) continue;
+    if (workDays.indexOf(startTZ.getDay()) < 0) continue;
+    if (events.some((event: { start: Date; end: Date }) => event.start < endTime && event.end > start)) {
       continue;
     }
     timeslots.push(start.toISOString());
   }
-  return { timeslots, durationMinutes: CONFIG.TIMESLOT_DURATION };
+  return { timeslots, durationMinutes };
 }
 
 function bookTimeslot(
@@ -137,24 +178,28 @@ function bookTimeslot(
   name: string,
   email: string,
   phone: string,
-  note: string
+  note: string,
+  eventTypeId?: string
 ): string {
-  const calendarId = CONFIG.CALENDARS[0];
+  const eventType = CONFIG.EVENT_TYPES.find((et: EventType) => et.id === eventTypeId) || CONFIG.EVENT_TYPES[0];
+  const durationMinutes = eventType.duration;
+  const calendarsToUse = eventType.CALENDARS ?? CONFIG.CALENDARS;
+  const calendarId = calendarsToUse[0];
   const startTime = new Date(timeslot);
   if (isNaN(startTime.getTime())) {
     throw new Error("Invalid start time");
   }
   const endTime = new Date(startTime.getTime());
-  endTime.setUTCMinutes(startTime.getUTCMinutes() + CONFIG.TIMESLOT_DURATION);
+  endTime.setUTCMinutes(startTime.getUTCMinutes() + durationMinutes);
 
   try {
     const possibleEvents = Calendar.Freebusy!.query({
       timeMin: startTime.toISOString(),
       timeMax: endTime.toISOString(),
-      items: CONFIG.CALENDARS.map((id: string) => ({ id })),
+      items: calendarsToUse.map((id: string) => ({ id })),
     });
 
-    const hasConflict = CONFIG.CALENDARS.some((calId: string) =>
+    const hasConflict = calendarsToUse.some((calId: string) =>
       (possibleEvents as any).calendars[calId].busy.length > 0
     );
 

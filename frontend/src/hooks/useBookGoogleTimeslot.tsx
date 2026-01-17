@@ -10,38 +10,42 @@ export function useBookGoogleTimeslot() {
     setError(null);
     setStatus("idle");
   }, []);
-  const makeBooking = useCallback(function ({
-    timeslot,
-    name,
-    email,
-    phone,
-    note,
-  }: {
-    timeslot: Date;
-    name: string;
-    email: string;
-    phone: string;
-    note?: string;
-  }) {
-    try {
-      setStatus("pending");
-      GoogleLib.google.script.run
-        .withSuccessHandler(function () {
-          setStatus("success");
-        })
-        .withFailureHandler(function (err: Error) {
-          setStatus("error");
-          setError(
-            new Error("Could not book timeslot, please try again - " + err)
-          );
-        })
-        .bookTimeslot(timeslot.toISOString(), name, email, phone, note);
-    } catch (err) {
-      console.error(err);
-      setStatus("error");
-      setError(new Error("Could not book timeslot, please try again - " + err));
-    }
-  },
-  []);
+  const makeBooking = useCallback(
+    function ({
+      timeslot,
+      name,
+      email,
+      phone,
+      note,
+      eventTypeId,
+    }: {
+      timeslot: Date;
+      name: string;
+      email: string;
+      phone: string;
+      note?: string;
+      eventTypeId?: string;
+    }) {
+      try {
+        setStatus("pending");
+        GoogleLib.google.script.run
+          .withSuccessHandler(function () {
+            setStatus("success");
+          })
+          .withFailureHandler(function (err: Error) {
+            setStatus("error");
+            setError(
+              new Error("Could not book timeslot, please try again - " + err)
+            );
+          })
+          .bookTimeslot(timeslot.toISOString(), name, email, phone, note, eventTypeId);
+      } catch (err) {
+        console.error(err);
+        setStatus("error");
+        setError(new Error("Could not book timeslot, please try again - " + err));
+      }
+    },
+    []
+  );
   return [status, error, makeBooking, reset] as const;
 }
