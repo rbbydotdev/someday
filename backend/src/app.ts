@@ -219,6 +219,7 @@ function bookTimeslot(
 
     const strategy = eventType.schedulingStrategy ?? CONFIG.schedulingStrategy ?? 'collective';
     let targetCalendarId = calendarsToUse[0];
+    let guestsToInvite = [email];
 
     if (strategy === 'round_robin') {
       if (freeCalendars.length === 0) {
@@ -226,6 +227,8 @@ function bookTimeslot(
       }
       // Randomly select one of the free calendars
       targetCalendarId = freeCalendars[Math.floor(Math.random() * freeCalendars.length)];
+      // Round Robin: Only the assignee (targetCalendar) and the customer (email) attend.
+      // guestsToInvite remains [email]
     } else {
       // Collective: Check if ALL are free
       if (freeCalendars.length !== calendarsToUse.length) {
@@ -233,6 +236,9 @@ function bookTimeslot(
       }
       // Default to first calendar
       targetCalendarId = calendarsToUse[0];
+      // Collective: Invite all other calendars so everyone is blocked/attending
+      const teamGuests = calendarsToUse.filter((id: string) => id !== targetCalendarId);
+      guestsToInvite = [...guestsToInvite, ...teamGuests];
     }
 
     const event = CalendarApp.getCalendarById(targetCalendarId).createEvent(
@@ -241,7 +247,7 @@ function bookTimeslot(
       endTime,
       {
         description: `Phone: ${phone}\nNote: ${note}`,
-        guests: email,
+        guests: guestsToInvite.join(','),
         sendInvites: true,
         status: "confirmed",
       }
