@@ -23,6 +23,7 @@ Someday is a simple, open-source scheduling tool designed specifically for Gmail
 - **Multiple Event Types**: Create diverse meeting options like "Quick Chat" or "Deep Dive" with unique durations and availability settings.
 - **Team Scheduling**: Add multiple calendars including teammates' calendars (with read access) for collaborative scheduling.
 - **Flexible Scheduling Strategies**: Choose between "Collective" (all team members must be free) or "Round-Robin" (distribute bookings among available team members) scheduling modes.
+- **Guest Permission Controls**: Fine-grained control over what guests can do with booked events (modify, invite others, see attendees) and calendar visibility (public, private, or default).
 - **Dynamic Configuration**: Adjust your timezone, working hours, available days, and monitored calendars globally or per event type directly through the integrated Settings screen.
 - **Owner-Only Access**: Secure access to configuration via the script owner's Google account session.
 - **Simple Booking Process**: Users can select a date and time slot, then fill out a straightforward form with their name, email, phone, and an optional note.
@@ -55,6 +56,14 @@ Someday includes a built-in **Settings** screen for easy configuration.
    **Event Types**:
    - **Custom Meeting Types**: Create unlimited event types (e.g. "15 Min Discovery", "1 Hour Review").
    - **Flexible Durations**: Set specific lengths for each meeting type (up to 24 hours).
+   - **Guest Permissions**: Control what guests can do with booked events:
+     - **Modify Event**: Allow/prevent guests from changing event details, time, or location
+     - **Invite Others**: Allow/prevent guests from adding additional attendees
+     - **See Other Guests**: Allow/prevent guests from viewing the attendee list
+   - **Calendar Visibility**: Choose how events appear in Google Calendar:
+     - **Default**: Uses your calendar's default visibility setting
+     - **Public**: Event details are publicly visible to everyone
+     - **Private**: Shows only as "Busy" without revealing event details
    - **Smart Overrides**: Override global Work Hours, Available Days, Monitored Calendars, and Scheduling Strategy for specific event types.
    - **Per-Event Strategies**: Set different scheduling strategies for different event types (e.g., Round-Robin for sales calls, Collective for team meetings).
    - **Direct Links**: Copy a unique booking URL for any event type to share directly.
