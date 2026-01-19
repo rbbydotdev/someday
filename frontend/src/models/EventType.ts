@@ -9,6 +9,12 @@ export interface EventType {
     DAYS_IN_ADVANCE?: number;
     CALENDARS?: string[];
     schedulingStrategy?: 'collective' | 'round_robin';
+    // Guest permissions
+    guestsCanModify?: boolean;
+    guestsCanInviteOthers?: boolean;
+    guestsCanSeeOtherGuests?: boolean;
+    // Meeting visibility
+    visibility?: 'default' | 'public' | 'private';
 }
 
 export interface Config {

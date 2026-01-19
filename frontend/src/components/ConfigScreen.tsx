@@ -834,6 +834,122 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                                             )}
                                         </div>
 
+                                        {/* Guest Permissions & Visibility */}
+                                        <div className="pt-6 border-t space-y-4">
+                                            <div className="space-y-1">
+                                                <Label className="text-sm font-semibold">Guest Permissions & Visibility</Label>
+                                                <p className="text-xs text-muted-foreground">
+                                                    Control what guests can do and how the event appears in calendars.
+                                                </p>
+                                            </div>
+
+                                            {/* Guest Permissions */}
+                                            <div className="space-y-3 pl-2">
+                                                <div className="flex items-start gap-4">
+                                                    <Switch
+                                                        id={`guestsCanModify-${index}`}
+                                                        checked={et.guestsCanModify ?? false}
+                                                        onCheckedChange={(checked) => updateEventType(index, { guestsCanModify: checked })}
+                                                        className="mt-1"
+                                                    />
+                                                    <div className="space-y-1">
+                                                        <Label htmlFor={`guestsCanModify-${index}`} className="text-sm font-normal cursor-pointer">
+                                                            Allow guests to modify event
+                                                        </Label>
+                                                        <span className="block text-[10px] text-muted-foreground">
+                                                            Guests can change the event time, location, and other details
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-start gap-4">
+                                                    <Switch
+                                                        id={`guestsCanInviteOthers-${index}`}
+                                                        checked={et.guestsCanInviteOthers ?? false}
+                                                        onCheckedChange={(checked) => updateEventType(index, { guestsCanInviteOthers: checked })}
+                                                        className="mt-1"
+                                                    />
+                                                    <div className="space-y-1">
+                                                        <Label htmlFor={`guestsCanInviteOthers-${index}`} className="text-sm font-normal cursor-pointer">
+                                                            Allow guests to invite others
+                                                        </Label>
+                                                        <span className="block text-[10px] text-muted-foreground">
+                                                            Guests can add additional attendees to the event
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-start gap-4">
+                                                    <Switch
+                                                        id={`guestsCanSeeOtherGuests-${index}`}
+                                                        checked={et.guestsCanSeeOtherGuests ?? true}
+                                                        onCheckedChange={(checked) => updateEventType(index, { guestsCanSeeOtherGuests: checked })}
+                                                        className="mt-1"
+                                                    />
+                                                    <div className="space-y-1">
+                                                        <Label htmlFor={`guestsCanSeeOtherGuests-${index}`} className="text-sm font-normal cursor-pointer">
+                                                            Allow guests to see other guests
+                                                        </Label>
+                                                        <span className="block text-[10px] text-muted-foreground">
+                                                            Guests can view the list of all attendees
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Visibility Setting */}
+                                            <div className="space-y-2">
+                                                <div className="space-y-1">
+                                                    <Label className="text-sm font-medium">Calendar Visibility</Label>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        Control how the event appears in Google Calendar
+                                                    </p>
+                                                </div>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="outline" className="w-full justify-between font-normal h-auto min-h-10">
+                                                            <div className="flex flex-col items-start gap-0.5 text-left py-1">
+                                                                <span className="font-medium">
+                                                                    {et.visibility === 'public' ? 'Public' : et.visibility === 'private' ? 'Private' : 'Default'}
+                                                                </span>
+                                                                <span className="text-[10px] text-muted-foreground font-normal">
+                                                                    {et.visibility === 'public'
+                                                                        ? 'Event details are publicly visible'
+                                                                        : et.visibility === 'private'
+                                                                        ? 'Only shows as "Busy" without details'
+                                                                        : 'Uses calendar default visibility'}
+                                                                </span>
+                                                            </div>
+                                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                        <DropdownMenuItem onClick={() => updateEventType(index, { visibility: 'default' })}>
+                                                            <div className="flex flex-col gap-1">
+                                                                <span>Default</span>
+                                                                <span className="text-xs text-muted-foreground">Uses calendar's default visibility setting</span>
+                                                            </div>
+                                                            {(!et.visibility || et.visibility === 'default') && <Check className="ml-auto h-4 w-4" />}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => updateEventType(index, { visibility: 'public' })}>
+                                                            <div className="flex flex-col gap-1">
+                                                                <span>Public</span>
+                                                                <span className="text-xs text-muted-foreground">Event details visible to everyone</span>
+                                                            </div>
+                                                            {et.visibility === 'public' && <Check className="ml-auto h-4 w-4" />}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => updateEventType(index, { visibility: 'private' })}>
+                                                            <div className="flex flex-col gap-1">
+                                                                <span>Private</span>
+                                                                <span className="text-xs text-muted-foreground">Shows as "Busy" without event details</span>
+                                                            </div>
+                                                            {et.visibility === 'private' && <Check className="ml-auto h-4 w-4" />}
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 )}
                             </Card>
