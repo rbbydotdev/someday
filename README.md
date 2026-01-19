@@ -130,7 +130,7 @@ __you may need to sign out of all accounts, and only into your target account__
 
 5. **Calendar Access:**
    - By default, the script uses your primary calendar.
-   - You can manage multiple calendars directly through the **Settings** screen in the UI.
+   - You can add multiple calendars directly through the **Settings** screen in the UI, including calendars of teammates.
    - The script needs at least read access to any calendar you monitor for conflicts.
 
 ## Cheat Sheet
