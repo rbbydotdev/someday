@@ -659,19 +659,10 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                                         </div>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" className="w-full justify-between font-normal h-auto min-h-10">
-                                                    <div className="flex flex-col items-start gap-0.5 text-left py-1">
-                                                        <span className="font-medium">
-                                                            {et.visibility === 'public' ? 'Public' : et.visibility === 'private' ? 'Private' : 'Default'}
-                                                        </span>
-                                                        <span className="text-[10px] text-muted-foreground font-normal">
-                                                            {et.visibility === 'public'
-                                                                ? 'Event details are publicly visible'
-                                                                : et.visibility === 'private'
-                                                                ? 'Only shows as "Busy" without details'
-                                                                : 'Uses calendar default visibility'}
-                                                        </span>
-                                                    </div>
+                                                <Button variant="outline" className="w-full justify-between font-normal">
+                                                    <span className="truncate">
+                                                        {et.visibility === 'public' ? 'Public' : et.visibility === 'private' ? 'Private' : 'Default'}
+                                                    </span>
                                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                                 </Button>
                                             </DropdownMenuTrigger>
