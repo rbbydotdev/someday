@@ -603,7 +603,7 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                                             size="sm"
                                             className="h-8"
                                             onClick={() => {
-                                                const url = `${window.location.origin}${window.location.pathname}?event-type=${et.id}`;
+                                                const url = `${scriptUrl}?event-type=${et.id}`;
                                                 navigator.clipboard.writeText(url);
                                             }}
                                         >
