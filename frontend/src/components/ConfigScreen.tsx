@@ -342,68 +342,39 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                     </Popover>
                 </div>
 
-                {/* Scheduling Window */}
-                <div className="space-y-3">
-                    <div className="space-y-1">
-                        <Label htmlFor="daysInAdvance" className="text-sm font-medium">Scheduling Window</Label>
-                        <p className="text-xs text-muted-foreground">
-                            How many days into the future users can see and book appointments.
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-4 relative">
-                        {/* High number of days can make the system slow as it fetches availability for each day */}
-                        <Input
-                            id="daysInAdvance"
-                            type="number"
-                            min="1"
-                            max="90"
-                            className="w-full pr-12"
-                            value={config.DAYS_IN_ADVANCE}
-                            onChange={(e) => {
-                                const val = parseInt(e.target.value, 10);
-                                if (!isNaN(val)) {
-                                    setConfig({ ...config, DAYS_IN_ADVANCE: Math.max(1, val) });
-                                } else {
-                                    setConfig({ ...config, DAYS_IN_ADVANCE: 1 });
-                                }
-                            }}
-                        />
-                        <span className="absolute right-3 text-sm text-muted-foreground pointer-events-none">days</span>
-                    </div>
-                </div>
-
-                {/* Work Hours Range */}
-                <div className="space-y-3">
-                    <div className="space-y-1">
-                        <Label className="text-sm font-medium">
-                            Work Hours
-                        </Label>
-                        <p className="text-xs text-muted-foreground">
-                            The daily window of time during which you are available for bookings.
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <TimeDropdown
-                            value={config.WORKHOURS.start}
-                            onChange={(val) => setConfig({
-                                ...config,
-                                WORKHOURS: { ...config.WORKHOURS, start: val }
-                            })}
-                        />
-                        <span className="text-muted-foreground">to</span>
-                        <TimeDropdown
-                            value={config.WORKHOURS.end}
-                            onChange={(val) => setConfig({
-                                ...config,
-                                WORKHOURS: { ...config.WORKHOURS, end: val }
-                            })}
-                        />
-                    </div>
-                </div>
-
-                {/* Workdays and Calendars */}
+                {/* Scheduling Window and Available Days */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Workdays */}
+                    {/* Scheduling Window */}
+                    <div className="space-y-3">
+                        <div className="space-y-1">
+                            <Label htmlFor="daysInAdvance" className="text-sm font-medium">Scheduling Window</Label>
+                            <p className="text-xs text-muted-foreground">
+                                How many days into the future users can see and book appointments.
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-4 relative">
+                            {/* High number of days can make the system slow as it fetches availability for each day */}
+                            <Input
+                                id="daysInAdvance"
+                                type="number"
+                                min="1"
+                                max="90"
+                                className="w-full pr-12"
+                                value={config.DAYS_IN_ADVANCE}
+                                onChange={(e) => {
+                                    const val = parseInt(e.target.value, 10);
+                                    if (!isNaN(val)) {
+                                        setConfig({ ...config, DAYS_IN_ADVANCE: Math.max(1, val) });
+                                    } else {
+                                        setConfig({ ...config, DAYS_IN_ADVANCE: 1 });
+                                    }
+                                }}
+                            />
+                            <span className="absolute right-3 text-sm text-muted-foreground pointer-events-none">days</span>
+                        </div>
+                    </div>
+
+                    {/* Available Days */}
                     <div className="space-y-3">
                         <div className="space-y-1">
                             <Label className="text-sm font-medium">
@@ -438,7 +409,39 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
+                </div>
 
+                {/* Work Hours Range */}
+                <div className="space-y-3">
+                    <div className="space-y-1">
+                        <Label className="text-sm font-medium">
+                            Work Hours
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                            The daily window of time during which you are available for bookings.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <TimeDropdown
+                            value={config.WORKHOURS.start}
+                            onChange={(val) => setConfig({
+                                ...config,
+                                WORKHOURS: { ...config.WORKHOURS, start: val }
+                            })}
+                        />
+                        <span className="text-muted-foreground">to</span>
+                        <TimeDropdown
+                            value={config.WORKHOURS.end}
+                            onChange={(val) => setConfig({
+                                ...config,
+                                WORKHOURS: { ...config.WORKHOURS, end: val }
+                            })}
+                        />
+                    </div>
+                </div>
+
+                {/* Calendars and Strategy */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Calendars */}
                     <div className="space-y-3">
                         <div className="space-y-1">
@@ -455,6 +458,47 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                             onChange={(vals) => setConfig({ ...config, CALENDARS: vals })}
                         />
                     </div>
+
+                    {/* Global Scheduling Strategy */}
+                    {config.CALENDARS.length > 1 && (
+                        <div className="space-y-3">
+                            <div className="space-y-1">
+                                <Label className="text-sm font-medium">Scheduling Strategy</Label>
+                                <p className="text-xs text-muted-foreground">
+                                    Default availability logic for all event types.
+                                </p>
+                            </div>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-between font-normal h-auto min-h-10">
+                                        <div className="flex flex-col items-start gap-0.5 text-left py-1">
+                                            <span className="font-medium">{config.schedulingStrategy === 'round_robin' ? 'Round Robin' : 'Collective'}</span>
+                                            <span className="text-[10px] text-muted-foreground font-normal">
+                                                {config.schedulingStrategy === 'round_robin' ? 'Book if ANY calendar is free' : 'Book only if ALL calendars are free'}
+                                            </span>
+                                        </div>
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                    <DropdownMenuItem onClick={() => setConfig({ ...config, schedulingStrategy: 'collective' })}>
+                                        <div className="flex flex-col gap-1">
+                                            <span>Collective</span>
+                                            <span className="text-xs text-muted-foreground">All calendars must be free.</span>
+                                        </div>
+                                        {(!config.schedulingStrategy || config.schedulingStrategy === 'collective') && <Check className="ml-auto h-4 w-4" />}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => setConfig({ ...config, schedulingStrategy: 'round_robin' })}>
+                                        <div className="flex flex-col gap-1">
+                                            <span>Round Robin</span>
+                                            <span className="text-xs text-muted-foreground">Any calendar can be free.</span>
+                                        </div>
+                                        {config.schedulingStrategy === 'round_robin' && <Check className="ml-auto h-4 w-4" />}
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    )}
                 </div>
 
                 {/* Event Types */}
@@ -549,7 +593,9 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                                                 <span className="block text-[10px] text-muted-foreground">If disabled, this type can only be booked via direct links</span>
                                             </div>
                                         </div>
+
                                     </div>
+
 
                                     <div className="col-span-full flex gap-2 items-center pt-4 border-t border-muted/30">
                                         <Button
@@ -602,30 +648,61 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                                                 />
                                             </div>
 
-                                            {/* Monitored Calendars Override */}
+                                            {/* Available Days Override */}
                                             <div className="space-y-2">
                                                 <div className="space-y-1">
-                                                    <Label className="text-sm font-medium">Monitored Calendars</Label>
+                                                    <div className="flex justify-between items-center">
+                                                        <Label className="text-sm font-medium">Available Days</Label>
+                                                        {et.WORKDAYS && (
+                                                            <Button variant="link" size="sm" className="h-auto p-0 text-destructive" onClick={() => updateEventType(index, { WORKDAYS: undefined })}>
+                                                                Reset to Global
+                                                            </Button>
+                                                        )}
+                                                    </div>
                                                     <p className="text-xs text-muted-foreground">
-                                                        Override which calendars to check for conflicts.
+                                                        Override which days are available for booking.
                                                     </p>
                                                 </div>
-                                                <CalendarMultiSelect
-                                                    selected={et.CALENDARS ?? config.CALENDARS}
-                                                    available={availableCalendars}
-                                                    placeholder={et.CALENDARS === undefined ? "Using global settings" : "Select calendars..."}
-                                                    onChange={(vals) => updateEventType(index, { CALENDARS: vals })}
-                                                />
-                                                {et.CALENDARS !== undefined && (
-                                                    <Button
-                                                        variant="link"
-                                                        size="sm"
-                                                        className="h-auto p-0 text-destructive mt-1"
-                                                        onClick={() => updateEventType(index, { CALENDARS: undefined })}
-                                                    >
-                                                        Reset to Global
-                                                    </Button>
-                                                )}
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="outline" className="w-full justify-between font-normal">
+                                                            <span className="truncate">
+                                                                {et.WORKDAYS === undefined
+                                                                    ? "Using global settings"
+                                                                    : et.WORKDAYS.length === 0
+                                                                        ? "No days available"
+                                                                        : et.WORKDAYS.length === 7
+                                                                            ? "All days"
+                                                                            : `${et.WORKDAYS.length} days selected`}
+                                                            </span>
+                                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                        <DropdownMenuItem
+                                                            className="text-destructive font-semibold"
+                                                            onClick={() => updateEventType(index, { WORKDAYS: undefined })}
+                                                        >
+                                                            Reset to Global
+                                                        </DropdownMenuItem>
+                                                        {DAYS_OF_WEEK.map((day) => (
+                                                            <DropdownMenuCheckboxItem
+                                                                key={day.value}
+                                                                checked={(et.WORKDAYS ?? config.WORKDAYS).includes(day.value)}
+                                                                onCheckedChange={() => {
+                                                                    const current = et.WORKDAYS ?? config.WORKDAYS;
+                                                                    const next = current.includes(day.value)
+                                                                        ? current.filter(d => d !== day.value)
+                                                                        : [...current, day.value].sort();
+                                                                    updateEventType(index, { WORKDAYS: next });
+                                                                }}
+                                                                onSelect={(e) => e.preventDefault()}
+                                                            >
+                                                                {day.label}
+                                                            </DropdownMenuCheckboxItem>
+                                                        ))}
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </div>
                                         </div>
 
@@ -665,69 +742,105 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                                             </div>
                                         </div>
 
-                                        {/* Available Days Override */}
-                                        <div className="space-y-3">
-                                            <div className="space-y-1">
-                                                <div className="flex justify-between items-center">
-                                                    <Label className="text-sm font-medium">Available Days</Label>
-                                                    {et.WORKDAYS && (
-                                                        <Button variant="link" size="sm" className="h-auto p-0 text-destructive" onClick={() => updateEventType(index, { WORKDAYS: undefined })}>
-                                                            Reset to Global
-                                                        </Button>
-                                                    )}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {/* Monitored Calendars Override */}
+                                            <div className="space-y-2">
+                                                <div className="space-y-1">
+                                                    <Label className="text-sm font-medium">Monitored Calendars</Label>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        Override which calendars to check for conflicts.
+                                                    </p>
                                                 </div>
-                                                <p className="text-xs text-muted-foreground">
-                                                    Override which days are available for booking.
-                                                </p>
-                                            </div>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="outline" className="w-full justify-between font-normal">
-                                                        <span className="truncate">
-                                                            {et.WORKDAYS === undefined
-                                                                ? "Using global settings"
-                                                                : et.WORKDAYS.length === 0
-                                                                    ? "No days available"
-                                                                    : et.WORKDAYS.length === 7
-                                                                        ? "All days"
-                                                                        : `${et.WORKDAYS.length} days selected`}
-                                                        </span>
-                                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                                                    <DropdownMenuItem
-                                                        className="text-destructive font-semibold"
-                                                        onClick={() => updateEventType(index, { WORKDAYS: undefined })}
+                                                <CalendarMultiSelect
+                                                    selected={et.CALENDARS ?? config.CALENDARS}
+                                                    available={availableCalendars}
+                                                    placeholder={et.CALENDARS === undefined ? "Using global settings" : "Select calendars..."}
+                                                    onChange={(vals) => updateEventType(index, { CALENDARS: vals })}
+                                                />
+                                                {et.CALENDARS !== undefined && (
+                                                    <Button
+                                                        variant="link"
+                                                        size="sm"
+                                                        className="h-auto p-0 text-destructive mt-1"
+                                                        onClick={() => updateEventType(index, { CALENDARS: undefined })}
                                                     >
                                                         Reset to Global
-                                                    </DropdownMenuItem>
-                                                    {DAYS_OF_WEEK.map((day) => (
-                                                        <DropdownMenuCheckboxItem
-                                                            key={day.value}
-                                                            checked={(et.WORKDAYS ?? config.WORKDAYS).includes(day.value)}
-                                                            onCheckedChange={() => {
-                                                                const current = et.WORKDAYS ?? config.WORKDAYS;
-                                                                const next = current.includes(day.value)
-                                                                    ? current.filter(d => d !== day.value)
-                                                                    : [...current, day.value].sort();
-                                                                updateEventType(index, { WORKDAYS: next });
-                                                            }}
-                                                            onSelect={(e) => e.preventDefault()}
-                                                        >
-                                                            {day.label}
-                                                        </DropdownMenuCheckboxItem>
-                                                    ))}
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                                    </Button>
+                                                )}
+                                            </div>
+
+                                            {/* Scheduling Strategy Override */}
+                                            {(et.CALENDARS ?? config.CALENDARS).length > 1 && (
+                                                <div className="space-y-2">
+                                                    <div className="flex justify-between items-center">
+                                                        <Label className="text-sm font-medium">Scheduling Strategy</Label>
+                                                        {et.schedulingStrategy && (
+                                                            <Button
+                                                                variant="link"
+                                                                size="sm"
+                                                                className="h-auto p-0 text-destructive"
+                                                                onClick={() => updateEventType(index, { schedulingStrategy: undefined })}
+                                                            >
+                                                                Reset to Global
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        How to handle availability across multiple calendars.
+                                                    </p>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="outline" className="w-full justify-between font-normal h-auto min-h-10">
+                                                                <div className="flex flex-col items-start gap-0.5 text-left py-1">
+                                                                    <span className="font-medium">
+                                                                        {et.schedulingStrategy
+                                                                            ? (et.schedulingStrategy === 'round_robin' ? 'Round Robin' : 'Collective')
+                                                                            : (config.schedulingStrategy === 'round_robin' ? 'Round Robin (Global)' : 'Collective (Global)')
+                                                                        }
+                                                                    </span>
+                                                                    <span className="text-[10px] text-muted-foreground font-normal">
+                                                                        {et.schedulingStrategy === 'round_robin' || (!et.schedulingStrategy && config.schedulingStrategy === 'round_robin')
+                                                                            ? 'Book if ANY calendar is free'
+                                                                            : 'Book only if ALL calendars are free'}
+                                                                    </span>
+                                                                </div>
+                                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                            <DropdownMenuItem
+                                                                className="text-destructive font-semibold"
+                                                                onClick={() => updateEventType(index, { schedulingStrategy: undefined })}
+                                                            >
+                                                                Reset to Global
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => updateEventType(index, { schedulingStrategy: 'collective' })}>
+                                                                <div className="flex flex-col gap-1">
+                                                                    <span>Collective</span>
+                                                                    <span className="text-xs text-muted-foreground">All calendars must be free. Best for panels or when everyone is needed.</span>
+                                                                </div>
+                                                                {(et.schedulingStrategy === 'collective' || (!et.schedulingStrategy && (!config.schedulingStrategy || config.schedulingStrategy === 'collective'))) && <Check className="ml-auto h-4 w-4" />}
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => updateEventType(index, { schedulingStrategy: 'round_robin' })}>
+                                                                <div className="flex flex-col gap-1">
+                                                                    <span>Round Robin</span>
+                                                                    <span className="text-xs text-muted-foreground">Any calendar can be free. Best for distributing calls among a team.</span>
+                                                                </div>
+                                                                {(et.schedulingStrategy === 'round_robin' || (!et.schedulingStrategy && config.schedulingStrategy === 'round_robin')) && <Check className="ml-auto h-4 w-4" />}
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </div>
+                                            )}
                                         </div>
+
                                     </div>
                                 )}
                             </Card>
                         ))}
                     </div>
                 </div>
-            </CardContent>
+            </CardContent >
             <CardFooter className="flex justify-between pt-6 border-t pb-6">
                 <Button variant="outline" onClick={onBack}>
                     Cancel

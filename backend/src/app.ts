@@ -10,6 +10,7 @@ interface EventType {
   WORKHOURS?: { start: number; end: number };
   DAYS_IN_ADVANCE?: number;
   CALENDARS?: string[];
+  schedulingStrategy?: 'collective' | 'round_robin';
 }
 
 const CONFIG = {
@@ -39,7 +40,8 @@ const CONFIG = {
     } catch (e) {
       return ["primary"];
     }
-  })()
+  })(),
+  schedulingStrategy: (props.getProperty('schedulingStrategy') || 'collective') as 'collective' | 'round_robin'
 };
 
 function isOwner(): boolean {
@@ -62,6 +64,7 @@ function getConfig() {
     DAYS_IN_ADVANCE: CONFIG.DAYS_IN_ADVANCE,
     EVENT_TYPES: CONFIG.EVENT_TYPES,
     CALENDARS: CONFIG.CALENDARS,
+    schedulingStrategy: CONFIG.schedulingStrategy,
   };
 
   if (!isOwner()) {
@@ -83,6 +86,7 @@ function setConfig(newConfig: Partial<typeof CONFIG>) {
   if (newConfig.DAYS_IN_ADVANCE !== undefined) props.setProperty('DAYS_IN_ADVANCE', newConfig.DAYS_IN_ADVANCE.toString());
   if (newConfig.EVENT_TYPES) props.setProperty('EVENT_TYPES', JSON.stringify(newConfig.EVENT_TYPES));
   if (newConfig.CALENDARS) props.setProperty('CALENDARS', JSON.stringify(newConfig.CALENDARS));
+  if (newConfig.schedulingStrategy) props.setProperty('schedulingStrategy', newConfig.schedulingStrategy);
 
   return { success: true };
 }
@@ -141,17 +145,19 @@ function fetchAvailability(eventTypeId?: string): {
     items: calendarsToQuery.map((id: string) => ({ id })),
   });
 
-  const events = calendarsToQuery.map((calendarId: string) => {
+  const eventsByCalendar: Record<string, { start: Date; end: Date }[]> = {};
+  calendarsToQuery.forEach((calendarId: string) => {
     const busyTimes = (response as any).calendars[calendarId].busy;
-    Logger.log(`Busy times for ${calendarId}: ${JSON.stringify(busyTimes)}`);
-    return busyTimes.map(({ start, end }: { start: string; end: string }) => ({
+    eventsByCalendar[calendarId] = busyTimes.map(({ start, end }: { start: string; end: string }) => ({
       start: new Date(start),
       end: new Date(end)
     }));
-  }).reduce((acc, curr) => acc.concat(curr), []);
+  });
 
   //get all timeslots between now and end date
   const timeslots = [];
+  const strategy = eventType.schedulingStrategy ?? CONFIG.schedulingStrategy ?? 'collective';
+
   for (
     let t = nearestTimeslot.getTime();
     t + durationMs <= end.getTime();
@@ -165,10 +171,18 @@ function fetchAvailability(eventTypeId?: string): {
     if (startTZ.getHours() < workHours.start) continue;
     if (startTZ.getHours() >= workHours.end) continue;
     if (workDays.indexOf(startTZ.getDay()) < 0) continue;
-    if (events.some((event: { start: Date; end: Date }) => event.start < endTime && event.end > start)) {
-      continue;
+
+    const freeCalendarsCount = calendarsToQuery.filter((calId: string) => {
+      return !eventsByCalendar[calId].some((event) => event.start < endTime && event.end > start);
+    }).length;
+
+    const isAvailable = strategy === 'round_robin'
+      ? freeCalendarsCount > 0
+      : freeCalendarsCount === calendarsToQuery.length;
+
+    if (isAvailable) {
+      timeslots.push(start.toISOString());
     }
-    timeslots.push(start.toISOString());
   }
   return { timeslots, durationMinutes };
 }
@@ -199,15 +213,29 @@ function bookTimeslot(
       items: calendarsToUse.map((id: string) => ({ id })),
     });
 
-    const hasConflict = calendarsToUse.some((calId: string) =>
-      (possibleEvents as any).calendars[calId].busy.length > 0
+    const freeCalendars = calendarsToUse.filter((calId: string) =>
+      (possibleEvents as any).calendars[calId].busy.length === 0
     );
 
-    if (hasConflict) {
-      throw new Error("Timeslot not available");
+    const strategy = eventType.schedulingStrategy ?? CONFIG.schedulingStrategy ?? 'collective';
+    let targetCalendarId = calendarsToUse[0];
+
+    if (strategy === 'round_robin') {
+      if (freeCalendars.length === 0) {
+        throw new Error("Timeslot not available");
+      }
+      // Randomly select one of the free calendars
+      targetCalendarId = freeCalendars[Math.floor(Math.random() * freeCalendars.length)];
+    } else {
+      // Collective: Check if ALL are free
+      if (freeCalendars.length !== calendarsToUse.length) {
+        throw new Error("Timeslot not available");
+      }
+      // Default to first calendar
+      targetCalendarId = calendarsToUse[0];
     }
 
-    const event = CalendarApp.getCalendarById(calendarId).createEvent(
+    const event = CalendarApp.getCalendarById(targetCalendarId).createEvent(
       `Appointment with ${name}`,
       startTime,
       endTime,
