@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "./ui/switch";
 import { GoogleLib } from "@/lib/googlelib";
+import { CalendarMultiSelect } from "./CalendarMultiSelect";
 
 import { Config, EventType } from "@/models/EventType";
 
@@ -251,12 +252,7 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
         );
     };
 
-    const toggleCalendar = (calId: string) => {
-        const newCalendars = config.CALENDARS.includes(calId)
-            ? config.CALENDARS.filter(id => id !== calId)
-            : [...config.CALENDARS, calId];
-        setConfig({ ...config, CALENDARS: newCalendars });
-    };
+
 
     const addEventType = () => {
         const newEt: EventType = {
@@ -453,44 +449,11 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                                 Calendars to check for conflicts.
                             </p>
                         </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className="w-full justify-between font-normal overflow-hidden">
-                                    <span className="truncate">
-                                        {config.CALENDARS.length === 0
-                                            ? "Select calendars..."
-                                            : config.CALENDARS.length === 1
-                                                ? availableCalendars.find(c => c.id === config.CALENDARS[0])?.name || config.CALENDARS[0]
-                                                : `${config.CALENDARS.length} calendars`}
-                                    </span>
-                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] max-h-[300px] overflow-y-auto">
-                                {availableCalendars.map((cal) => (
-                                    <DropdownMenuCheckboxItem
-                                        key={cal.id}
-                                        checked={config.CALENDARS.includes(cal.id)}
-                                        onCheckedChange={() => toggleCalendar(cal.id)}
-                                        onSelect={(e) => e.preventDefault()}
-                                    >
-                                        {cal.name}
-                                    </DropdownMenuCheckboxItem>
-                                ))}
-                                {/* Show calendars currently in config but not available in account */}
-                                {config.CALENDARS.filter(id => !availableCalendars.some(ac => ac.id === id)).map(id => (
-                                    <DropdownMenuCheckboxItem
-                                        key={id}
-                                        checked={true}
-                                        onCheckedChange={() => toggleCalendar(id)}
-                                        onSelect={(e) => e.preventDefault()}
-                                        className="text-muted-foreground italic"
-                                    >
-                                        {id} (unavailable)
-                                    </DropdownMenuCheckboxItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <CalendarMultiSelect
+                            selected={config.CALENDARS}
+                            available={availableCalendars}
+                            onChange={(vals) => setConfig({ ...config, CALENDARS: vals })}
+                        />
                     </div>
                 </div>
 
@@ -647,46 +610,22 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                                                         Override which calendars to check for conflicts.
                                                     </p>
                                                 </div>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="outline" className="w-full justify-between font-normal">
-                                                            <span className="truncate">
-                                                                {et.CALENDARS === undefined
-                                                                    ? "Using global settings"
-                                                                    : et.CALENDARS.length === 0
-                                                                        ? "No calendars (all free)"
-                                                                        : et.CALENDARS.length === 1
-                                                                            ? availableCalendars.find(c => c.id === et.CALENDARS![0])?.name || et.CALENDARS![0]
-                                                                            : `${et.CALENDARS.length} calendars`}
-                                                            </span>
-                                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] max-h-[300px] overflow-y-auto">
-                                                        <DropdownMenuItem
-                                                            className="text-destructive font-semibold"
-                                                            onClick={() => updateEventType(index, { CALENDARS: undefined })}
-                                                        >
-                                                            Reset to Global
-                                                        </DropdownMenuItem>
-                                                        {availableCalendars.map((cal) => (
-                                                            <DropdownMenuCheckboxItem
-                                                                key={cal.id}
-                                                                checked={et.CALENDARS?.includes(cal.id) || false}
-                                                                onCheckedChange={(checked) => {
-                                                                    const current = et.CALENDARS ?? config.CALENDARS;
-                                                                    const next = checked
-                                                                        ? [...current, cal.id]
-                                                                        : current.filter(id => id !== cal.id);
-                                                                    updateEventType(index, { CALENDARS: next });
-                                                                }}
-                                                                onSelect={(e) => e.preventDefault()}
-                                                            >
-                                                                {cal.name}
-                                                            </DropdownMenuCheckboxItem>
-                                                        ))}
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                                <CalendarMultiSelect
+                                                    selected={et.CALENDARS ?? config.CALENDARS}
+                                                    available={availableCalendars}
+                                                    placeholder={et.CALENDARS === undefined ? "Using global settings" : "Select calendars..."}
+                                                    onChange={(vals) => updateEventType(index, { CALENDARS: vals })}
+                                                />
+                                                {et.CALENDARS !== undefined && (
+                                                    <Button
+                                                        variant="link"
+                                                        size="sm"
+                                                        className="h-auto p-0 text-destructive mt-1"
+                                                        onClick={() => updateEventType(index, { CALENDARS: undefined })}
+                                                    >
+                                                        Reset to Global
+                                                    </Button>
+                                                )}
                                             </div>
                                         </div>
 
