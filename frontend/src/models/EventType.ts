@@ -8,6 +8,7 @@ export interface EventType {
     WORKHOURS?: { start: number; end: number };
     DAYS_IN_ADVANCE?: number;
     CALENDARS?: string[];
+    schedulingStrategy?: 'collective' | 'round_robin';
 }
 
 export interface Config {
@@ -17,4 +18,5 @@ export interface Config {
     DAYS_IN_ADVANCE: number;
     EVENT_TYPES: EventType[];
     CALENDARS: string[];
+    schedulingStrategy?: 'collective' | 'round_robin';
 }

@@ -21,6 +21,8 @@ Someday is a simple, open-source scheduling tool designed specifically for Gmail
 - **Effortless Integration**: Designed as a Google Apps Script, Someday integrates seamlessly with your Gmail, making it easy to manage your schedule directly from your inbox.
 - **Developer-Friendly**: Built with modern, developer-preferred technologies, Someday is easy to customize and extend.
 - **Multiple Event Types**: Create diverse meeting options like "Quick Chat" or "Deep Dive" with unique durations and availability settings.
+- **Team Scheduling**: Add multiple calendars including teammates' calendars (with read access) for collaborative scheduling.
+- **Flexible Scheduling Strategies**: Choose between "Collective" (all team members must be free) or "Round-Robin" (distribute bookings among available team members) scheduling modes.
 - **Dynamic Configuration**: Adjust your timezone, working hours, available days, and monitored calendars globally or per event type directly through the integrated Settings screen.
 - **Owner-Only Access**: Secure access to configuration via the script owner's Google account session.
 - **Simple Booking Process**: Users can select a date and time slot, then fill out a straightforward form with their name, email, phone, and an optional note.
@@ -45,12 +47,16 @@ Someday includes a built-in **Settings** screen for easy configuration.
    - **Scheduling Window**: Control how many days into the future users can book (up to 90 days).
    - **Work Hours**: Define your standard daily window of availability.
    - **Available Days**: Select which days of the week you normally accept bookings.
-   - **Monitored Calendars**: Choose multiple calendars to check for conflicts (e.g., Personal, Work, Holidays).
+   - **Monitored Calendars**: Choose multiple calendars to check for conflicts (e.g., Personal, Work, Holidays). You can add teammate calendars or any calendar you have read access to by entering their email address.
+   - **Scheduling Strategy** (when multiple calendars selected):
+     - **Collective**: All selected team members must be free for a timeslot to be available. All team members are invited to the booked event.
+     - **Round-Robin**: Bookings are distributed among available team members. Only the assigned team member and the guest receive calendar invites.
 
    **Event Types**:
    - **Custom Meeting Types**: Create unlimited event types (e.g. "15 Min Discovery", "1 Hour Review").
    - **Flexible Durations**: Set specific lengths for each meeting type (up to 24 hours).
-   - **Smart Overrides**: Override global Work Hours, Available Days, and Monitored Calendars for specific event types.
+   - **Smart Overrides**: Override global Work Hours, Available Days, Monitored Calendars, and Scheduling Strategy for specific event types.
+   - **Per-Event Strategies**: Set different scheduling strategies for different event types (e.g., Round-Robin for sales calls, Collective for team meetings).
    - **Direct Links**: Copy a unique booking URL for any event type to share directly.
    - **Visibility Controls**: Toggle which event types are displayed on your main public scheduling page.
 
@@ -130,8 +136,9 @@ __you may need to sign out of all accounts, and only into your target account__
 
 5. **Calendar Access:**
    - By default, the script uses your primary calendar.
-   - You can add multiple calendars directly through the **Settings** screen in the UI, including calendars of teammates.
-   - The script needs at least read access to any calendar you monitor for conflicts.
+   - You can add multiple calendars directly through the **Settings** screen in the UI by selecting from your owned calendars or entering any calendar email address (e.g., teammate@company.com).
+   - The script needs at least read access to any calendar you monitor for conflicts or team scheduling.
+   - For team scheduling, ensure you have appropriate calendar permissions for teammates' calendars you wish to include.
 
 ## Cheat Sheet
 
