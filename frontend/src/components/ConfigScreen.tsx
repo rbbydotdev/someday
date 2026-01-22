@@ -578,7 +578,7 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                                             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">minutes</span>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col gap-4">
+                                    <div className="space-y-2">
                                         <div className="flex items-start gap-4">
                                             <Switch
                                                 id={`selectable-${index}`}
@@ -593,7 +593,103 @@ export function ConfigScreen({ onBack }: { onBack: () => void }) {
                                                 <span className="block text-[10px] text-muted-foreground">If disabled, this type can only be booked via direct links</span>
                                             </div>
                                         </div>
-
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="space-y-1">
+                                            <Label className="text-sm font-medium">Guest Permissions</Label>
+                                            <p className="text-xs text-muted-foreground">
+                                                Control what guests can do with this event.
+                                            </p>
+                                        </div>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="outline" className="w-full justify-between font-normal">
+                                                    <span className="truncate">
+                                                        {(() => {
+                                                            const permissions = [];
+                                                            if (et.guestsCanModify) permissions.push('Modify');
+                                                            if (et.guestsCanInviteOthers) permissions.push('Invite');
+                                                            if (et.guestsCanSeeOtherGuests ?? true) permissions.push('See guests');
+                                                            return permissions.length > 0 ? permissions.join(', ') : 'See guests only';
+                                                        })()}
+                                                    </span>
+                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                <DropdownMenuCheckboxItem
+                                                    checked={et.guestsCanModify ?? false}
+                                                    onCheckedChange={(checked) => updateEventType(index, { guestsCanModify: checked })}
+                                                    onSelect={(e) => e.preventDefault()}
+                                                >
+                                                    <div className="flex flex-col gap-1">
+                                                        <span>Allow guests to modify event</span>
+                                                        <span className="text-xs text-muted-foreground">Change time, location, details</span>
+                                                    </div>
+                                                </DropdownMenuCheckboxItem>
+                                                <DropdownMenuCheckboxItem
+                                                    checked={et.guestsCanInviteOthers ?? false}
+                                                    onCheckedChange={(checked) => updateEventType(index, { guestsCanInviteOthers: checked })}
+                                                    onSelect={(e) => e.preventDefault()}
+                                                >
+                                                    <div className="flex flex-col gap-1">
+                                                        <span>Allow guests to invite others</span>
+                                                        <span className="text-xs text-muted-foreground">Add additional attendees</span>
+                                                    </div>
+                                                </DropdownMenuCheckboxItem>
+                                                <DropdownMenuCheckboxItem
+                                                    checked={et.guestsCanSeeOtherGuests ?? true}
+                                                    onCheckedChange={(checked) => updateEventType(index, { guestsCanSeeOtherGuests: checked })}
+                                                    onSelect={(e) => e.preventDefault()}
+                                                >
+                                                    <div className="flex flex-col gap-1">
+                                                        <span>Allow guests to see other guests</span>
+                                                        <span className="text-xs text-muted-foreground">View attendee list</span>
+                                                    </div>
+                                                </DropdownMenuCheckboxItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="space-y-1">
+                                            <Label className="text-sm font-medium">Calendar Visibility</Label>
+                                            <p className="text-xs text-muted-foreground">
+                                                How the event appears in Google Calendar.
+                                            </p>
+                                        </div>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="outline" className="w-full justify-between font-normal">
+                                                    <span className="truncate">
+                                                        {et.visibility === 'public' ? 'Public' : et.visibility === 'private' ? 'Private' : 'Default'}
+                                                    </span>
+                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
+                                                <DropdownMenuItem onClick={() => updateEventType(index, { visibility: 'default' })}>
+                                                    <div className="flex flex-col gap-1">
+                                                        <span>Default</span>
+                                                        <span className="text-xs text-muted-foreground">Uses calendar's default visibility setting</span>
+                                                    </div>
+                                                    {(!et.visibility || et.visibility === 'default') && <Check className="ml-auto h-4 w-4" />}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => updateEventType(index, { visibility: 'public' })}>
+                                                    <div className="flex flex-col gap-1">
+                                                        <span>Public</span>
+                                                        <span className="text-xs text-muted-foreground">Event details visible to everyone</span>
+                                                    </div>
+                                                    {et.visibility === 'public' && <Check className="ml-auto h-4 w-4" />}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => updateEventType(index, { visibility: 'private' })}>
+                                                    <div className="flex flex-col gap-1">
+                                                        <span>Private</span>
+                                                        <span className="text-xs text-muted-foreground">Shows as "Busy" without event details</span>
+                                                    </div>
+                                                    {et.visibility === 'private' && <Check className="ml-auto h-4 w-4" />}
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </div>
 
 

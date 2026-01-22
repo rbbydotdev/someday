@@ -11,6 +11,12 @@ interface EventType {
   DAYS_IN_ADVANCE?: number;
   CALENDARS?: string[];
   schedulingStrategy?: 'collective' | 'round_robin';
+  // Guest permissions
+  guestsCanModify?: boolean;
+  guestsCanInviteOthers?: boolean;
+  guestsCanSeeOtherGuests?: boolean;
+  // Meeting visibility
+  visibility?: 'default' | 'public' | 'private';
 }
 
 const CONFIG = {
@@ -252,6 +258,19 @@ function bookTimeslot(
         status: "confirmed",
       }
     );
+
+    // Apply guest permissions (defaults: modify=false, invite=false, see=true)
+    event.setGuestsCanModify(eventType.guestsCanModify ?? false);
+    event.setGuestsCanInviteOthers(eventType.guestsCanInviteOthers ?? false);
+    event.setGuestsCanSeeGuests(eventType.guestsCanSeeOtherGuests ?? true);
+
+    // Apply visibility setting
+    if (eventType.visibility === 'public') {
+      event.setVisibility(CalendarApp.Visibility.PUBLIC);
+    } else if (eventType.visibility === 'private') {
+      event.setVisibility(CalendarApp.Visibility.PRIVATE);
+    }
+    // 'default' visibility doesn't require explicit setting
     return `Timeslot booked successfully`;
   } catch (e) {
     const error = e as Error;
