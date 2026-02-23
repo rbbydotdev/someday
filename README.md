@@ -16,54 +16,33 @@ Someday is a simple, open-source scheduling tool designed specifically for Gmail
 
 ### Key Features
 
-- **Free to Host**: Using Google Apps Script, hosting is free via your Google account.
+- **Free to Host**: Using Google Apps Script, hosting is free via your google account.
 - **Open Source**: Someday is completely free to use and open for contributions.
 - **Effortless Integration**: Designed as a Google Apps Script, Someday integrates seamlessly with your Gmail, making it easy to manage your schedule directly from your inbox.
-- **Developer-Friendly**: Built with modern, developer-preferred technologies, Someday is easy to customize and extend.
-- **Multiple Event Types**: Create diverse meeting options like "Quick Chat" or "Deep Dive" with unique durations and availability settings.
-- **Team Scheduling**: Add multiple calendars including teammates' calendars (with read access) for collaborative scheduling.
-- **Flexible Scheduling Strategies**: Choose between "Collective" (all team members must be free) or "Round-Robin" (distribute bookings among available team members) scheduling modes.
-- **Dynamic Configuration**: Adjust your timezone, working hours, available days, and monitored calendars globally or per event type directly through the integrated Settings screen.
-- **Owner-Only Access**: Secure access to configuration via the script owner's Google account session.
+- **Developer-Friendly**: Built with modern, developer-preferred technologies, Someday is easy to customize and extend to meet your specific needs.
+- **Customizable Work Hours**: Set your availability with precision, allowing others to book time slots that fit your schedule perfectly.
 - **Simple Booking Process**: Users can select a date and time slot, then fill out a straightforward form with their name, email, phone, and an optional note.
-- **Privacy First**: No data sharing beyond Google to 3rd party apps.
+- **Privacy First**: No data sharing beyond google to 3rd party apps
 
 ## Getting Started
 
-### Configuration
+### Customize 
 
-Someday includes a built-in **Settings** screen for easy configuration.
+Change the following variables in `backend/src/app.ts` to customize your availability settings:
 
-1. **Accessing Settings**:
-   - Once deployed, open your web app URL.
-   - If you are the person who deployed the script (the **Owner**), you will see a **gear icon** ⚙️ next to the theme toggle.
-   - **Note**: Google Apps Script owner recognition may fail if you are logged into multiple Google accounts in the same browser. To see the settings icon, ensure you are logged into **only one account** or use an **Incognito/Private window** and log into the account you deployed the script with.
-   - Click the gear icon to open the configuration screen.
+```typescript
+// backend/src/app.ts
+const CALENDAR = "primary";
+const TIME_ZONE = "America/New_York";
+const WORKDAYS = [1, 2, 3, 4, 5];
+const WORKHOURS = {
+  start: 9,
+  end: 13,
+};
+const TIMESLOT_DURATION = 30;
+```
 
-2. **Configurable Settings**:
-   
-   **Global Defaults**:
-   - **Time Zone**: Set your primary time zone for availability calculations.
-   - **Scheduling Window**: Control how many days into the future users can book (up to 90 days).
-   - **Work Hours**: Define your standard daily window of availability.
-   - **Available Days**: Select which days of the week you normally accept bookings.
-   - **Monitored Calendars**: Choose multiple calendars to check for conflicts (e.g., Personal, Work, Holidays). You can add teammate calendars or any calendar you have read access to by entering their email address.
-   - **Scheduling Strategy** (when multiple calendars selected):
-     - **Collective**: All selected team members must be free for a timeslot to be available. All team members are invited to the booked event.
-     - **Round-Robin**: Bookings are distributed among available team members. Only the assigned team member and the guest receive calendar invites.
-
-   **Event Types**:
-   - **Custom Meeting Types**: Create unlimited event types (e.g. "15 Min Discovery", "1 Hour Review").
-   - **Flexible Durations**: Set specific lengths for each meeting type (up to 24 hours).
-   - **Smart Overrides**: Override global Work Hours, Available Days, Monitored Calendars, and Scheduling Strategy for specific event types.
-   - **Per-Event Strategies**: Set different scheduling strategies for different event types (e.g., Round-Robin for sales calls, Collective for team meetings).
-   - **Direct Links**: Copy a unique booking URL for any event type to share directly.
-   - **Visibility Controls**: Toggle which event types are displayed on your main public scheduling page.
-
-3. **Backend Defaults**:
-   To change the fallback defaults, you can modify the `CONFIG` object initialization in `backend/src/app.ts`.
-
-### Self host iframe html / remove Google App Scripts banner
+### Self host iframe html / remove google app scripts banner
 
 - Google apps script has a banner that says "This application was created by a Google Apps Script user", to remove you can host the html file yourself and embed the script as an iframe
 
@@ -135,14 +114,20 @@ __you may need to sign out of all accounts, and only into your target account__
    - if it worked, refresh the page/editor then run the function again and it should complete without issue.
 
 5. **Calendar Access:**
-   - By default, the script uses your primary calendar.
-   - You can add multiple calendars directly through the **Settings** screen in the UI by selecting from your owned calendars or entering any calendar email address (e.g., teammate@company.com).
-   - The script needs at least read access to any calendar you monitor for conflicts or team scheduling.
-   - For team scheduling, ensure you have appropriate calendar permissions for teammates' calendars you wish to include.
+   - By default, the script uses your primary calendar
+   - To use other calendars, make sure they are added to your Google Calendar with appropriate permissions
+   - You can change which calendar to use by modifying the `CALENDAR` variable in `backend/src/app.ts`
+   - Note: The script needs at least read access to the calendar you specify
+   - To use multiple calendars, you'll need to add them as Script Properties in the Apps Script editor:
+     1. Open the script editor with `clasp open`
+     2. Go to Project Settings (⚙️ icon)
+     3. Under "Script Properties", click "Add Script Property"
+     4. Add a property named "CALENDARS" with a comma-separated list of calendar IDs
 
 ## Cheat Sheet
 
-- `npm run deploy` - build and deploy
+- `npm run deploy` - build and delpoy
+
 - `npm run build` - build only
 
 - `undeployall.sh` - undeploy all versions of the script
